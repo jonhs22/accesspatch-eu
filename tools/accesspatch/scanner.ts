@@ -1,10 +1,8 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { chromium } from "playwright";
-import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { open, readFile } from "node:fs/promises";
 import path from "node:path";
-import { promisify } from "node:util";
 import {
   RunManifestSchema,
   type EvidenceSet,
@@ -35,8 +33,11 @@ import {
   formatBlockedRequestFailure,
   installNetworkIsolation,
 } from "./scanner-policy.js";
-
-const execFileAsync = promisify(execFile);
+import {
+  assertCleanInteractiveWorktree,
+  assertHeadUnchanged,
+  currentHead,
+} from "./git-guard.js";
 
 export type ScanPhase = "before" | "after";
 
@@ -106,14 +107,6 @@ function sortAxeResults(results: AxeResult): AxeResult {
     incomplete: sortRules(results.incomplete),
     inapplicable: sortRules(results.inapplicable),
   };
-}
-
-async function repositoryCommit(): Promise<string> {
-  const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], {
-    cwd: PROJECT_ROOT,
-    windowsHide: true,
-  });
-  return stdout.trim();
 }
 
 async function toolVersions() {
@@ -310,15 +303,17 @@ export async function scan(
     if (phase === "before") {
       const previous = await store.read();
       const now = new Date().toISOString();
+      const runMode = options.runMode ?? "interactive";
+      await assertCleanInteractiveWorktree({ runMode });
       const initial = RunManifestSchema.parse({
         schemaVersion: 1,
         revision: 0,
         runId: options.runId ?? createRunId(),
-        runMode: options.runMode ?? "interactive",
+        runMode,
         status: "scanning",
         targetUrl: config.targetUrl,
         editableRoots: config.editableRoots,
-        baselineCommit: await repositoryCommit(),
+        baselineCommit: await currentHead(),
         createdAt: now,
         updatedAt: now,
         toolVersions: await toolVersions(),
@@ -360,7 +355,9 @@ export async function scan(
     }
 
     try {
+      await assertHeadUnchanged(current.baselineCommit);
       const after = await captureEvidence(current, "after");
+      await assertHeadUnchanged(current.baselineCommit);
       const verifying = RunManifestSchema.parse({
         ...current,
         revision: current.revision + 1,
