@@ -47,6 +47,24 @@ export function isPermittedWebSocketUrl(value: string): boolean {
   );
 }
 
+export function sanitizeBlockedExternalUrl(value: string): string {
+  if (value === "invalid-external-url") return value;
+  const parsed = parseUrl(value);
+  if (!parsed || !parsed.hostname) return "invalid-external-url";
+  const scheme = parsed.protocol.toLowerCase();
+  const hostname = parsed.hostname.toLowerCase();
+  const port = parsed.port ? `:${parsed.port}` : "";
+  return `${scheme}//${hostname}${port}`;
+}
+
+export function formatBlockedRequestFailure(
+  blockedExternalRequests: string[],
+): string {
+  const sanitized = blockedExternalRequests.map(sanitizeBlockedExternalUrl);
+  const origins = [...new Set(sanitized)].sort();
+  return `Blocked ${sanitized.length} external network requests (${origins.join(", ")}).`;
+}
+
 export function buildBrowserContextOptions(
   environment: KeyboardEnvironment,
 ): BrowserContextOptions {
@@ -69,7 +87,7 @@ export async function installNetworkIsolation(
       await route.continue();
       return;
     }
-    blockedExternalRequests.push(url);
+    blockedExternalRequests.push(sanitizeBlockedExternalUrl(url));
     await route.abort("blockedbyclient");
   });
 
@@ -79,7 +97,7 @@ export async function installNetworkIsolation(
       webSocket.connectToServer();
       return;
     }
-    blockedExternalRequests.push(url);
+    blockedExternalRequests.push(sanitizeBlockedExternalUrl(url));
     await webSocket.close({
       code: 1008,
       reason: "AccessPatch permits only loopback WebSockets.",

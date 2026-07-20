@@ -32,6 +32,7 @@ import {
 import { withBrowserContext } from "./scanner-lifecycle.js";
 import {
   buildBrowserContextOptions,
+  formatBlockedRequestFailure,
   installNetworkIsolation,
 } from "./scanner-policy.js";
 
@@ -218,9 +219,7 @@ async function captureEvidence(
         traceStarted = false;
 
         if (blockedExternalRequests.length > 0) {
-          throw new Error(
-            `Scanner blocked external network requests: ${blockedExternalRequests.sort().join(", ")}`,
-          );
+          throw new Error(formatBlockedRequestFailure(blockedExternalRequests));
         }
 
         const checkoutSource = await readFile(

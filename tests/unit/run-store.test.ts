@@ -108,6 +108,103 @@ describe("RunStore", () => {
     expect((await readdir(path.join(testRoot, "public", "runs"))).filter((name) => name.endsWith(".tmp"))).toEqual([]);
   });
 
+  it("attempts temp, handle, and lock cleanup independently while preserving the primary error", async () => {
+    const primary = new Error("rename primary failure");
+    const cleanup = new Error("simulated cleanup failure");
+    const operations: string[] = [];
+    const cleanupStore = new RunStore(testRoot, {
+      rename: async () => {
+        throw primary;
+      },
+      closeHandle: async (handle, kind) => {
+        operations.push(`close:${kind}`);
+        await handle.close();
+        if (kind === "lock") throw cleanup;
+      },
+      remove: async (candidate) => {
+        const kind = candidate.endsWith(".lock") ? "lock" : "temp";
+        operations.push(`remove:${kind}`);
+        await rm(candidate, { force: true });
+        if (kind === "temp") throw cleanup;
+      },
+      renameRetryDelayMs: 0,
+    });
+
+    await expect(cleanupStore.write(validManifest())).rejects.toBe(primary);
+    expect(operations).toEqual([
+      "close:temporary",
+      "remove:temp",
+      "close:lock",
+      "remove:lock",
+    ]);
+    await expect(readFile(path.join(testRoot, "public", "runs", ".current.lock"))).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+  });
+
+  it("continues cleanup after temporary handle close fails and aggregates cleanup-only errors", async () => {
+    const cleanup = new Error("temporary close failed");
+    const operations: string[] = [];
+    const cleanupStore = new RunStore(testRoot, {
+      closeHandle: async (handle, kind) => {
+        operations.push(`close:${kind}`);
+        await handle.close();
+        if (kind === "temporary") throw cleanup;
+      },
+      remove: async (candidate) => {
+        operations.push(candidate.endsWith(".lock") ? "remove:lock" : "remove:temp");
+        await rm(candidate, { force: true });
+      },
+    });
+
+    const rejection = await cleanupStore.write(validManifest()).catch((error: unknown) => error);
+    expect(rejection).toBeInstanceOf(AggregateError);
+    expect((rejection as AggregateError).errors).toContain(cleanup);
+    expect(operations).toEqual([
+      "close:temporary",
+      "remove:temp",
+      "close:lock",
+      "remove:lock",
+    ]);
+    await expect(readFile(path.join(testRoot, "public", "runs", ".current.lock"))).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+  });
+
+  it("aggregates lock close and removal failures after attempting both", async () => {
+    const closeFailure = new Error("lock close failed");
+    const removeFailure = new Error("lock removal failed");
+    const operations: string[] = [];
+    const cleanupStore = new RunStore(testRoot, {
+      closeHandle: async (handle, kind) => {
+        operations.push(`close:${kind}`);
+        await handle.close();
+        if (kind === "lock") throw closeFailure;
+      },
+      remove: async (candidate) => {
+        const kind = candidate.endsWith(".lock") ? "lock" : "temp";
+        operations.push(`remove:${kind}`);
+        await rm(candidate, { force: true });
+        if (kind === "lock") throw removeFailure;
+      },
+    });
+
+    const rejection = await cleanupStore.write(validManifest()).catch((error: unknown) => error);
+    expect(rejection).toBeInstanceOf(AggregateError);
+    expect((rejection as AggregateError).errors).toEqual([
+      closeFailure,
+      removeFailure,
+    ]);
+    expect(operations).toEqual([
+      "close:temporary",
+      "close:lock",
+      "remove:lock",
+    ]);
+    await expect(readFile(path.join(testRoot, "public", "runs", ".current.lock"))).rejects.toMatchObject({
+      code: "ENOENT",
+    });
+  });
+
   it.runIf(process.platform === "win32")("retries bounded Windows rename sharing violations", async () => {
     let attempts = 0;
     const retryingStore = new RunStore(testRoot, {

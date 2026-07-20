@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { RunManifestSchema } from "../../src/contracts/run.js";
 import {
   buildBrowserContextOptions,
+  formatBlockedRequestFailure,
   isPermittedHttpUrl,
   isPermittedWebSocketUrl,
+  sanitizeBlockedExternalUrl,
 } from "../../tools/accesspatch/scanner-policy.js";
 
 describe("scanner network policy", () => {
@@ -39,5 +42,58 @@ describe("scanner network policy", () => {
       reducedMotion: "reduce",
       serviceWorkers: "block",
     });
+  });
+
+  it("sanitizes adversarial HTTP and WebSocket URLs to useful origins", () => {
+    const rawHttp =
+      "https://alex.example.com:secret@example.com:8443/alex.example.com/secret?email=alex.example.com&token=secret#alex.example.com-secret";
+    const rawWebSocket =
+      "wss://alex.example.com:secret@socket.example.com:9443/alex.example.com/secret?email=alex.example.com&token=secret#alex.example.com-secret";
+    const blocked = [
+      sanitizeBlockedExternalUrl(rawHttp),
+      sanitizeBlockedExternalUrl(rawWebSocket),
+      sanitizeBlockedExternalUrl("not a valid URL alex.example.com secret"),
+    ];
+
+    expect(blocked).toEqual([
+      "https://example.com:8443",
+      "wss://socket.example.com:9443",
+      "invalid-external-url",
+    ]);
+    const keyboardJson = JSON.stringify({ blockedExternalRequests: blocked });
+    const failure = formatBlockedRequestFailure(blocked);
+    const failedManifestJson = JSON.stringify(
+      RunManifestSchema.parse({
+        schemaVersion: 1,
+        revision: 1,
+        runId: "blocked-url-privacy",
+        runMode: "deterministic_fixture",
+        status: "failed",
+        targetUrl: "http://127.0.0.1:4173/checkout",
+        editableRoots: ["src/checkout"],
+        baselineCommit: "a".repeat(40),
+        createdAt: "2026-07-20T12:00:00.000Z",
+        updatedAt: "2026-07-20T12:01:00.000Z",
+        toolVersions: {
+          node: "24.18.0",
+          playwright: "1.61.1",
+          axe: "4.12.1",
+          accesspatch: "1.0.0",
+        },
+        error: {
+          code: "SCAN_FAILED",
+          stage: "scanning",
+          message: failure,
+          occurredAt: "2026-07-20T12:01:00.000Z",
+          retryable: true,
+        },
+      }),
+    );
+    const persistedEvidence = `${keyboardJson}\n${failedManifestJson}\nlog=${failure}`;
+    expect(persistedEvidence).toContain("3 external network requests");
+    expect(persistedEvidence).toContain("https://example.com:8443");
+    expect(persistedEvidence).toContain("wss://socket.example.com:9443");
+    expect(persistedEvidence).not.toContain("alex.example.com");
+    expect(persistedEvidence).not.toContain("secret");
   });
 });

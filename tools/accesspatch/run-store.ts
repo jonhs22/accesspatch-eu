@@ -1,4 +1,10 @@
-import { open, readFile, rename as fsRename, rm } from "node:fs/promises";
+import {
+  open,
+  readFile,
+  rename as fsRename,
+  rm,
+  type FileHandle,
+} from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
@@ -8,6 +14,11 @@ import {
   type RunStatus,
 } from "../../src/contracts/run.js";
 import { assertInsideProject, ensureProjectDirectory } from "./paths.js";
+import {
+  attemptCleanup,
+  cleanupAggregateError,
+  type CleanupFailure,
+} from "./cleanup.js";
 
 export interface RunStoreExpectation {
   runId: string;
@@ -18,6 +29,11 @@ export interface RunStoreExpectation {
 export interface RunStoreOptions {
   rename?: (from: string, to: string) => Promise<void>;
   renameRetryDelayMs?: number;
+  closeHandle?: (
+    handle: FileHandle,
+    kind: "temporary" | "lock",
+  ) => Promise<void>;
+  remove?: (candidate: string) => Promise<void>;
 }
 
 const WINDOWS_RETRYABLE_CODES = new Set(["EACCES", "EBUSY", "EPERM"]);
@@ -34,6 +50,11 @@ export class RunStore {
   readonly lockPath: string;
   private readonly rename: (from: string, to: string) => Promise<void>;
   private readonly renameRetryDelayMs: number;
+  private readonly closeHandle: (
+    handle: FileHandle,
+    kind: "temporary" | "lock",
+  ) => Promise<void>;
+  private readonly remove: (candidate: string) => Promise<void>;
 
   constructor(projectRoot: string, options: RunStoreOptions = {}) {
     const safeRoot = assertInsideProject(projectRoot);
@@ -42,6 +63,12 @@ export class RunStore {
     this.lockPath = path.join(this.runsDirectory, ".current.lock");
     this.rename = options.rename ?? fsRename;
     this.renameRetryDelayMs = options.renameRetryDelayMs ?? 20;
+    this.closeHandle =
+      options.closeHandle ??
+      ((handle: FileHandle) => handle.close());
+    this.remove =
+      options.remove ??
+      ((candidate: string) => rm(candidate, { force: true }));
   }
 
   async read(): Promise<RunManifest | undefined> {
@@ -61,6 +88,10 @@ export class RunStore {
 
     const lockHandle = await this.acquireLock();
     let tempPath: string | undefined;
+    let tempHandle: FileHandle | undefined;
+    let primaryError: unknown;
+    let actionFailed = false;
+    const cleanupFailures: CleanupFailure[] = [];
     try {
       const current = await this.read();
       this.assertCompareAndSwap(current, validated, expectation);
@@ -71,22 +102,57 @@ export class RunStore {
           `.current.${process.pid}.${randomUUID()}.tmp`,
         ),
       );
-      const handle = await open(tempPath, "wx", 0o600);
+      tempHandle = await open(tempPath, "wx", 0o600);
       try {
-        await handle.writeFile(`${JSON.stringify(validated, null, 2)}\n`, "utf8");
-        await handle.sync();
-      } finally {
-        await handle.close();
+        await tempHandle.writeFile(`${JSON.stringify(validated, null, 2)}\n`, "utf8");
+        await tempHandle.sync();
+      } catch (error) {
+        actionFailed = true;
+        primaryError = error;
       }
 
-      await this.renameWithRetry(tempPath, assertInsideProject(this.currentPath));
-      tempPath = undefined;
-    } finally {
-      if (tempPath) {
-        await rm(tempPath, { force: true });
+      const tempClosed = await attemptCleanup(
+        cleanupFailures,
+        "temporary manifest handle close",
+        () => this.closeHandle(tempHandle as FileHandle, "temporary"),
+      );
+      tempHandle = undefined;
+
+      if (!actionFailed && tempClosed) {
+        await this.renameWithRetry(tempPath, assertInsideProject(this.currentPath));
+        tempPath = undefined;
       }
-      await lockHandle.close();
-      await rm(this.lockPath, { force: true });
+    } catch (error) {
+      if (!actionFailed) {
+        actionFailed = true;
+        primaryError = error;
+      }
+    }
+
+    if (tempHandle) {
+      await attemptCleanup(
+        cleanupFailures,
+        "temporary manifest handle close",
+        () => this.closeHandle(tempHandle as FileHandle, "temporary"),
+      );
+    }
+    if (tempPath) {
+      await attemptCleanup(
+        cleanupFailures,
+        "temporary manifest removal",
+        () => this.remove(tempPath as string),
+      );
+    }
+    await attemptCleanup(cleanupFailures, "run-store lock handle close", () =>
+      this.closeHandle(lockHandle, "lock"),
+    );
+    await attemptCleanup(cleanupFailures, "run-store lock removal", () =>
+      this.remove(this.lockPath),
+    );
+
+    if (actionFailed) throw primaryError;
+    if (cleanupFailures.length > 0) {
+      throw cleanupAggregateError("RunStore", cleanupFailures);
     }
   }
 
