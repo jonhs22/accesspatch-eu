@@ -18,12 +18,18 @@ and order values are synthetic; the product art is the repository-local
    repository-local fixtures. Playwright 1.61 requires an explicit expected
    string for `toHaveAccessibleName`, so the baseline assertion uses the
    equivalent empty accessible name assertion.
-4. The focused GREEN run passed both tests:
+4. The original focused GREEN run passed both tests:
    - broken fixture detects repeated Email focus, an empty payment-control
      accessible name, and a visible non-alert validation error;
    - repaired fixture has the exact label `Confirm and pay €42.00`, announces
      validation, focuses Email after invalid submit, preserves native Tab, and
      reaches `data-testid="order-confirmation"` after keyboard submission.
+5. Review remediation followed a second RED → GREEN cycle. New unit/static
+   assertions failed because Playwright had no global serialization,
+   `playwright.config.ts` was absent from `tsconfig.json`, and the manifest
+   mapped marker descriptions incorrectly. The keyboard-only repaired journey
+   also failed because the activated trigger disappeared. After the scoped
+   corrections, 4 unit/static assertions and all 3 focused browser tests pass.
 
 ## Files
 
@@ -33,13 +39,24 @@ and order values are synthetic; the product art is the repository-local
 - `fixtures/repaired-demo/CheckoutPage.tsx`
 - `fixtures/FIXTURE_MANIFEST.md`
 - `tests/e2e/checkout-fixtures.spec.ts`
+- `tests/unit/playwright-config.test.ts`,
+  `tests/unit/checkout-fixture-manifest.test.ts`
 - `playwright.config.ts`, `tsconfig.json`, `src/vite-env.d.ts`, `index.html`
 
 The baseline source and reset fixture each contain exactly three markers:
 `ACCESSPATCH-DEMO-001` (unnamed payment control), `002` (Email Tab trap), and
 `003` (silent validation). The repaired fixture changes only those
 evidence-backed behaviors. Fixture swapping is serial, local to the repository,
-and restores the checked-in baseline in a `finally` block.
+and restores the checked-in baseline as its original byte buffer in a `finally`
+block. Playwright is globally restricted to one worker with
+`fullyParallel: false`, so future source-swap specs cannot race.
+
+The repaired success journey is keyboard-only: Enter opens checkout, typed
+input replaces the synthetic invalid email, Tab reaches payment, and Enter
+submits. `requestSubmit()` now lives in its own named announcement-semantics
+probe. The repaired fixture's overlay truthfully reads `Tab moves through
+checkout controls`; that textual evidence change is coupled directly to
+removing the repeated-Tab blocker, not a fourth functional repair.
 
 ## Visual comparison and self-review
 
@@ -57,7 +74,13 @@ native 1672×941 viewport.
   third-party logos or requests.
 - Focus: native controls have a two-layer visible focus treatment. The broken
   Email handler deliberately prevents Tab and the overlay starts at `Tab × 5`
-  then increments as Tab is pressed. The repaired fixture removes that handler.
+  then increments as Tab is pressed. The repaired fixture removes that handler
+  and reports its native traversal truthfully. Both fixture surfaces now expose
+  the same dialog semantics (`role="dialog"`, `aria-modal="true"`, and the
+  `checkout-title` relationship), so they are not a repair-only delta.
+- Trigger: the activated `Start secure checkout` control remains visible at the
+  upper right of the Payment row, matching the accepted reference's persistent
+  trigger while exposing a clear current state.
 - Motion: no animation is required for the checkout; reduced-motion styles
   explicitly neutralize any transitions.
 
@@ -71,7 +94,8 @@ copy, and records the live Tab count instead.
 Fresh successful commands:
 
 ```text
-npx playwright test tests/e2e/checkout-fixtures.spec.ts  # 2 passed
+npx playwright test tests/e2e/checkout-fixtures.spec.ts  # 3 passed
+npm test                                                  # all unit tests passed
 npm run typecheck                                        # exit 0
 npm run build                                            # exit 0
 git diff --check                                         # exit 0
@@ -83,10 +107,12 @@ the required native viewport. Source-marker count check reported
 
 ## Commit
 
-Task commit message: `feat: add reproducible blocked checkout`.
+Baseline task commit message: `feat: add reproducible blocked checkout`.
+Review remediation is committed separately without rewriting that baseline.
 
 ## Concerns
 
 None for the scoped checkout. The intentionally broken source is expected to
 fail accessibility checks until the later, explicitly approved repair workflow
-copies the repaired fixture into `src/checkout`.
+copies the repaired fixture into `src/checkout`. The reference's dashed arrow
+remains intentionally omitted in favor of the live keyboard overlay.

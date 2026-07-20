@@ -88,15 +88,18 @@ export function CheckoutPage() {
           <section id="payment" className="payment-section" aria-labelledby="payment-heading">
             <div className="payment-heading-row">
               <h2 id="payment-heading">Payment</h2>
-              {!checkoutOpen && (
-                <button className="start-checkout" type="button" onClick={() => setCheckoutOpen(true)}>
-                  Start secure checkout
-                </button>
-              )}
+              <button
+                className={`start-checkout${checkoutOpen ? " is-active" : ""}`}
+                type="button"
+                aria-pressed={checkoutOpen}
+                onClick={() => setCheckoutOpen(true)}
+              >
+                Start secure checkout
+              </button>
             </div>
 
             {checkoutOpen && !confirmed && (
-              <form className="checkout-dialog" onSubmit={handleSubmit} aria-labelledby="checkout-title">
+              <form className="checkout-dialog" role="dialog" aria-modal="true" onSubmit={handleSubmit} aria-labelledby="checkout-title">
                 <h2 id="checkout-title">Complete your order</h2>
                 <div className="email-control">
                   <label htmlFor="email">Email</label>
@@ -134,7 +137,7 @@ export function CheckoutPage() {
 
           {checkoutOpen && !confirmed && (
             <p className="keyboard-overlay" data-testid="keyboard-overlay">
-              Tab × {Math.max(tabCount, 5)} · focus repeats on Email
+              Tab moves through checkout controls
             </p>
           )}
         </div>

@@ -9,6 +9,18 @@ const repairedFixture = path.join(projectRoot, "fixtures/repaired-demo/CheckoutP
 
 test.describe.configure({ mode: "serial" });
 
+async function withRepairedFixture(action: () => Promise<void>) {
+  const originalSource = await readFile(checkoutSource);
+
+  try {
+    await copyFile(repairedFixture, checkoutSource);
+    await action();
+  } finally {
+    await writeFile(checkoutSource, originalSource);
+    expect(await readFile(checkoutSource)).toEqual(originalSource);
+  }
+}
+
 test("broken fixture exposes the three curated blockers", async ({ page }) => {
   await page.goto("/checkout");
   await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
@@ -29,24 +41,33 @@ test("broken fixture exposes the three curated blockers", async ({ page }) => {
   await expect(page.locator('[data-testid="form-error"]')).not.toHaveAttribute("role", "alert");
 });
 
-test("repaired fixture completes a keyboard checkout and announces validation", async ({ page }) => {
-  const originalSource = await readFile(checkoutSource, "utf8");
-
-  try {
-    await copyFile(repairedFixture, checkoutSource);
+test("repaired fixture completes checkout using only focused keyboard controls", async ({ page }) => {
+  await withRepairedFixture(async () => {
     await page.goto("/checkout");
     await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
 
-    await page.getByTestId("payment-submit").click();
-    await expect(page.getByTestId("form-error")).toHaveAttribute("role", "alert");
+    await expect(page.getByRole("button", { name: "Start secure checkout" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Complete your order" })).toBeVisible();
+    await expect(page.getByTestId("keyboard-overlay")).toHaveText("Tab moves through checkout controls");
     await expect(page.getByTestId("email")).toBeFocused();
     await expect(page.getByTestId("payment-submit")).toHaveAccessibleName("Confirm and pay €42.00");
 
-    await page.getByTestId("email").fill("maya.chen@example.test");
+    await page.keyboard.press("Control+A");
+    await page.keyboard.type("maya.chen@example.test");
     await page.keyboard.press("Tab");
+    await expect(page.getByTestId("payment-submit")).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("order-confirmation")).toBeVisible();
-  } finally {
-    await writeFile(checkoutSource, originalSource, "utf8");
-  }
+  });
+});
+
+test("repaired fixture announces invalid submission semantics", async ({ page }) => {
+  await withRepairedFixture(async () => {
+    await page.goto("/checkout");
+    await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
+
+    await page.locator("form").evaluate((form: HTMLFormElement) => form.requestSubmit());
+    await expect(page.getByTestId("form-error")).toHaveAttribute("role", "alert");
+    await expect(page.getByTestId("email")).toBeFocused();
+  });
 });
