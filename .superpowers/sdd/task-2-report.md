@@ -19,8 +19,8 @@ and order values are synthetic; the product art is the repository-local
    string for `toHaveAccessibleName`, so the baseline assertion uses the
    equivalent empty accessible name assertion.
 4. The original focused GREEN run passed both tests:
-   - broken fixture detects repeated Email focus, an empty payment-control
-     accessible name, and a visible non-alert validation error;
+   - broad broken-fixture evidence detects repeated Email focus and an empty
+     payment-control accessible name;
    - repaired fixture has the exact label `Confirm and pay €42.00`, announces
      validation, focuses Email after invalid submit, preserves native Tab, and
      reaches `data-testid="order-confirmation"` after keyboard submission.
@@ -113,6 +113,15 @@ The final narrow follow-up is also a separate commit: it keeps the broad broken
 fixture test strictly about the focus trap and unnamed payment action, leaves
 `requestSubmit()` only in the named repaired announcement probe, and restores
 the activated trigger's green reference color.
+
+The final coverage follow-up renames that broad test to `broken fixture exposes
+focus trap and unnamed payment control` and replaces the repaired-only probe
+with `broken and repaired fixtures expose validation announcement semantics`.
+That explicit test calls `requestSubmit()` first against the default broken
+fixture to prove `form-error` lacks `role="alert"`, then uses the repaired
+fixture to prove the alert role and Email focus after invalid submission. A
+static guard requires both assertions and confines every `requestSubmit()`
+occurrence to this named probe.
 
 ## Concerns
 

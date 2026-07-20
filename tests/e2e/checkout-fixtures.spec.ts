@@ -21,7 +21,7 @@ async function withRepairedFixture(action: () => Promise<void>) {
   }
 }
 
-test("broken fixture exposes the three curated blockers", async ({ page }) => {
+test("broken fixture exposes focus trap and unnamed payment control", async ({ page }) => {
   await page.goto("/checkout");
   await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
 
@@ -59,7 +59,12 @@ test("repaired fixture completes checkout using only focused keyboard controls",
   });
 });
 
-test("repaired fixture announces invalid submission semantics", async ({ page }) => {
+test("broken and repaired fixtures expose validation announcement semantics", async ({ page }) => {
+  await page.goto("/checkout");
+  await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
+  await page.locator("form").evaluate((form: HTMLFormElement) => form.requestSubmit());
+  await expect(page.getByTestId("form-error")).not.toHaveAttribute("role", "alert");
+
   await withRepairedFixture(async () => {
     await page.goto("/checkout");
     await page.getByRole("button", { name: "Start secure checkout" }).press("Enter");
