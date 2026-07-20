@@ -4,6 +4,10 @@ coverage/
 playwright-report/
 test-results/
 public/runs/runtime/
+public/runs/current.json
+public/runs/.current.*.tmp
+public/runs/.current.lock
+public/runs/.fixture-reset.lock
 video/raw/
 video/work/
 *.log
