@@ -57,7 +57,7 @@
 .payment-heading-row h2 { margin: 0; font-size: 30px; letter-spacing: -1px; }
 .start-checkout { border: 0; padding: 4px 0; border-bottom: 1px solid currentColor; background: transparent; cursor: pointer; text-decoration: none; }
 .start-checkout:hover { color: #0d6748; }
-.start-checkout.is-active { color: var(--text-on-light); border-bottom-width: 2px; }
+.start-checkout.is-active { color: #16875f; border-bottom-width: 2px; }
 
 .checkout-dialog { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 132px; gap: 27px 38px; max-width: 740px; margin-top: 31px; padding: 33px 31px 25px; border: 1px solid #aeb1ab; border-radius: 9px; background: #f8f7f3; }
 .checkout-dialog h2 { grid-column: 1 / -1; margin: 0; font-size: 31px; letter-spacing: -1.4px; }

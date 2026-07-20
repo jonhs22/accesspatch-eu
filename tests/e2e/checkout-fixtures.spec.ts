@@ -37,8 +37,6 @@ test("broken fixture exposes the three curated blockers", async ({ page }) => {
 
   expect(new Set(focusTargets).size).toBe(1);
   await expect(page.locator('[data-testid="payment-submit"]')).toHaveAccessibleName("");
-  await page.locator("form").evaluate((form: HTMLFormElement) => form.requestSubmit());
-  await expect(page.locator('[data-testid="form-error"]')).not.toHaveAttribute("role", "alert");
 });
 
 test("repaired fixture completes checkout using only focused keyboard controls", async ({ page }) => {

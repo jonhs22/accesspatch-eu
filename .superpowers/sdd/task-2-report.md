@@ -109,6 +109,10 @@ the required native viewport. Source-marker count check reported
 
 Baseline task commit message: `feat: add reproducible blocked checkout`.
 Review remediation is committed separately without rewriting that baseline.
+The final narrow follow-up is also a separate commit: it keeps the broad broken
+fixture test strictly about the focus trap and unnamed payment action, leaves
+`requestSubmit()` only in the named repaired announcement probe, and restores
+the activated trigger's green reference color.
 
 ## Concerns
 
