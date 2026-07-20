@@ -142,87 +142,120 @@ The dashboard shows:
 
 ## Architecture
 
-The repository is an npm workspace with four independently understandable
-units.
+The repository uses one Vite + React + TypeScript application and one
+TypeScript CLI. This keeps the demo, evidence viewer, and generated artifacts
+on one localhost origin and removes the need for a second server, CORS,
+WebSockets, a database, or an API key.
 
-### `apps/demo-store`
+### `src/checkout`
 
-A Vite + React storefront with a single `/checkout` scenario. The checked-in
-default is intentionally broken. A separate golden repaired fixture exists for
-tests and deterministic comparison.
+The `/checkout` route is a polished synthetic storefront. The checked-in
+default is intentionally broken. Separate broken and repaired fixtures exist
+for deterministic reset and automated comparison.
 
-### `apps/dashboard`
+### `src/dashboard`
 
-A Vite + React evidence viewer. It reads generated JSON and media artifacts
-from a public reports directory. It does not perform model calls or source
-edits.
+The `/accesspatch` route is a read-only evidence viewer. It polls the atomic
+`public/runs/current.json` manifest and renders every workflow state. It does
+not perform model calls, claim to invoke AI, or edit source.
 
-### `packages/accesspatch-core`
+### `tools/accesspatch`
 
-A Node 24 + TypeScript library and CLI that owns:
+A Node 24 + TypeScript library and CLI owns:
 
 - Playwright journey execution;
 - axe-core injection;
 - custom keyboard assertions;
-- audit report creation;
+- atomic audit/run-manifest writes;
 - baseline/after comparison;
-- report publication to the dashboard;
+- safe editable-root enforcement;
 - demo reset; and
 - submission validation.
 
-Its public interfaces are:
+Its public state contract is:
 
 ```ts
-type AuditPhase = "before" | "after";
+type RunStatus =
+  | "scanning"
+  | "analyzing"
+  | "awaiting_approval"
+  | "patching"
+  | "verifying"
+  | "passed"
+  | "failed";
 
-interface AuditOptions {
-  phase: AuditPhase;
-  baseUrl: string;
-  outputDir: string;
-}
-
-interface AuditReport {
-  schemaVersion: "1.0";
-  phase: AuditPhase;
-  generatedAt: string;
-  journey: JourneyResult;
+interface EvidenceSet {
+  phase: "before" | "after";
+  url: string;
+  capturedAt: string;
+  screenshotPath: string;
+  tracePath: string;
+  domPath: string;
+  ariaSnapshotPath: string;
   findings: Finding[];
-  environment: AuditEnvironment;
+  journeyChecks: JourneyCheck[];
 }
 
-interface VerificationReceipt {
-  schemaVersion: "1.0";
-  generatedAt: string;
+interface FixProposal {
+  findingId: string;
+  diagnosis: string;
+  proposedChange: string;
+  candidateFiles: string[];
+}
+
+interface Approval {
+  decision: "approved" | "rejected";
+  findingIds: string[];
+  actor: "human";
+  recordedAt: string;
+}
+
+interface Verification {
+  outcome: "passed" | "failed";
   resolvedFindingIds: string[];
-  remainingCriticalFindingIds: string[];
-  introducedCriticalFindingIds: string[];
-  journeyPassed: boolean;
-  passed: boolean;
+  remainingFindingIds: string[];
+  regressions: Finding[];
+  checkoutCompleted: boolean;
+  diffPath: string;
 }
 
-function runAudit(options: AuditOptions): Promise<AuditReport>;
-function verifyAudit(
-  before: AuditReport,
-  after: AuditReport,
-): VerificationReceipt;
+interface RunManifest {
+  schemaVersion: 1;
+  runId: string;
+  status: RunStatus;
+  targetUrl: string;
+  editableRoots: string[];
+  before?: EvidenceSet;
+  proposals?: FixProposal[];
+  approval?: Approval;
+  after?: EvidenceSet;
+  verification?: Verification;
+}
 ```
 
 The CLI commands are:
 
 ```text
-accesspatch audit --phase before
-accesspatch audit --phase after
+accesspatch scan --phase before
+accesspatch proposals write --input <json>
+accesspatch approval record --finding AP-EU-001 --finding AP-EU-002
+accesspatch scan --phase after
 accesspatch verify
-accesspatch publish
 accesspatch reset-demo
 accesspatch submission-check
 ```
 
+Every manifest is validated with Zod and written through a temporary file plus
+atomic rename so the dashboard never reads partial JSON. Browser URLs are
+restricted to `localhost` and `127.0.0.1`. Source edits are allowed only below
+`src/checkout`.
+
 ### `plugins/accesspatch-eu`
 
 A valid Codex plugin with one `accesspatch` skill. The skill orchestrates the
-CLI, reads evidence, requests approval, edits source, verifies, and explains
-the result. The plugin includes no credential and no external connector.
+CLI, reads evidence, records proposals, requests approval, edits source,
+verifies, and explains the result. The plugin includes no credential and no
+external connector.
 
 The repository also includes a repo-scoped marketplace entry under
 `.agents/plugins/marketplace.json` for local installation and judging.
@@ -233,31 +266,48 @@ The repository also includes a repo-scoped marketplace entry under
 C:\Users\User\Desktop\hackathon\
   .agents\plugins\marketplace.json
   .github\workflows\ci.yml
-  apps\
-    dashboard\
-    demo-store\
   assets\
     ASSET_LEDGER.md
   docs\
     architecture.md
+    CODEX_COLLABORATION.md
     testing.md
     superpowers\
       plans\
       specs\
   fixtures\
+    broken-demo\
     repaired-demo\
-  packages\
-    accesspatch-core\
   plugins\
     accesspatch-eu\
       .codex-plugin\plugin.json
       skills\accesspatch\SKILL.md
-  reports\
+  public\
+    runs\
     samples\
   scripts\
     capture-demo.mjs
     render-video.ps1
     verify-video.ps1
+  src\
+    checkout\
+    dashboard\
+    App.tsx
+    main.tsx
+    styles.css
+  tests\
+    e2e\
+    unit\
+  tools\
+    accesspatch\
+      cli.ts
+      config.ts
+      findings.ts
+      keyboard-journey.ts
+      run-store.ts
+      scanner.ts
+      submission-check.ts
+      verifier.ts
   submission\
     DEVPOST.md
     DEMO_SCRIPT.md
@@ -269,9 +319,12 @@ C:\Users\User\Desktop\hackathon\
   README.md
   SECURITY.md
   THIRD_PARTY_NOTICES.md
+  accesspatch.config.json
+  index.html
   package.json
   package-lock.json
-  tsconfig.base.json
+  tsconfig.json
+  vite.config.ts
   vitest.config.ts
 ```
 
