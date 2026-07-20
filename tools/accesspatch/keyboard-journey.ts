@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import type { JourneyCheck } from "../../src/contracts/run.js";
+import { captureSanitizedOuterHtml } from "./scanner-artifacts.js";
 
 export interface KeyboardEnvironment {
   viewport: { width: 1672; height: 941 };
@@ -35,6 +36,11 @@ export interface KeyboardJourneyTrace {
 export interface KeyboardJourneyResult {
   trace: KeyboardJourneyTrace;
   journeyChecks: JourneyCheck[];
+  htmlExcerpts: {
+    payment: string;
+    email: string;
+    error: string;
+  };
 }
 
 async function activeFocusTarget(page: Page): Promise<FocusTarget> {
@@ -82,9 +88,29 @@ export async function runKeyboardJourney(
   ]);
   const visibleErrorIsLive =
     role === "alert" || ariaLive === "assertive" || ariaLive === "polite";
-  const checkoutCompleted = await page.getByTestId("order-confirmation").isVisible();
   const focusEscapedEmail =
     repeatedFocusTargets.some((target) => target !== repeatedFocusTargets[0]);
+  const [paymentHtml, emailHtml, errorHtml] = await Promise.all([
+    captureSanitizedOuterHtml(page.locator('[data-testid="payment-submit"]')),
+    captureSanitizedOuterHtml(page.locator('[data-testid="email"]')),
+    captureSanitizedOuterHtml(error),
+  ]);
+
+  // Keep the invalid-submit announcement probe above, then replay the same
+  // keyboard-only success path used by the repaired fixture. The broken
+  // fixture still traps this Tab on Email, so Enter is never sent there and a
+  // valid value alone cannot create a false successful journey.
+  await page.keyboard.press("Control+A");
+  await page.keyboard.type("maya.chen@example.test");
+  await page.keyboard.press("Tab");
+  const paymentTarget = await activeFocusTarget(page);
+  steps.push({ index: steps.length, key: "Tab", target: paymentTarget });
+  if (paymentTarget.testId === "payment-submit") {
+    await page.keyboard.press("Enter");
+    steps.push({ index: steps.length, key: "Enter", target: await activeFocusTarget(page) });
+    await page.getByTestId("order-confirmation").waitFor();
+  }
+  const checkoutCompleted = await page.getByTestId("order-confirmation").isVisible();
 
   const journeyChecks: JourneyCheck[] = [
     {
@@ -119,5 +145,10 @@ export async function runKeyboardJourney(
       blockedExternalRequests: [...blockedExternalRequests].sort(),
     },
     journeyChecks,
+    htmlExcerpts: {
+      payment: paymentHtml,
+      email: emailHtml,
+      error: errorHtml,
+    },
   };
 }

@@ -24,7 +24,6 @@ import {
 import { RunStore, type RunStoreExpectation } from "./run-store.js";
 import {
   captureSanitizedDom,
-  captureSanitizedOuterHtml,
   scrubPageFormData,
 } from "./scanner-artifacts.js";
 import { withBrowserContext } from "./scanner-lifecycle.js";
@@ -184,12 +183,9 @@ async function captureEvidence(
         const axeResults = sortAxeResults(
           (await new AxeBuilder({ page }).analyze()) as unknown as AxeResult,
         );
-        const [dom, aria, paymentHtml, emailHtml, errorHtml] = await Promise.all([
+        const [dom, aria] = await Promise.all([
           captureSanitizedDom(page),
           page.locator("body").ariaSnapshot(),
-          captureSanitizedOuterHtml(page.locator('[data-testid="payment-submit"]')),
-          captureSanitizedOuterHtml(page.locator('[data-testid="email"]')),
-          captureSanitizedOuterHtml(page.locator('[data-testid="form-error"]')),
         ]);
         const keyboardTrace = {
           ...journey.trace,
@@ -235,11 +231,7 @@ async function captureEvidence(
             aria: relativePaths.aria,
             keyboard: relativePaths.keyboard,
           },
-          htmlExcerpts: {
-            payment: paymentHtml,
-            email: emailHtml,
-            error: errorHtml,
-          },
+          htmlExcerpts: journey.htmlExcerpts,
         });
 
         return {
