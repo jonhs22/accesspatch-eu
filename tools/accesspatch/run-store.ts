@@ -1,4 +1,4 @@
-import { open, mkdir, readFile, rename as fsRename, rm } from "node:fs/promises";
+import { open, readFile, rename as fsRename, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
@@ -7,7 +7,7 @@ import {
   type RunManifest,
   type RunStatus,
 } from "../../src/contracts/run.js";
-import { assertInsideProject } from "./paths.js";
+import { assertInsideProject, ensureProjectDirectory } from "./paths.js";
 
 export interface RunStoreExpectation {
   runId: string;
@@ -57,8 +57,7 @@ export class RunStore {
 
   async write(manifest: RunManifest, expectation?: RunStoreExpectation): Promise<void> {
     const validated = RunManifestSchema.parse(manifest);
-    await mkdir(this.runsDirectory, { recursive: true });
-    assertInsideProject(this.runsDirectory);
+    await ensureProjectDirectory(this.runsDirectory);
 
     const lockHandle = await this.acquireLock();
     let tempPath: string | undefined;

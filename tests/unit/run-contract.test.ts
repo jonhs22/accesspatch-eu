@@ -60,6 +60,12 @@ const findingById: Record<string, Finding> = {
 
 function evidence(phase: "before" | "after", findings = Object.values(findingById)) {
   const root = `${RUNTIME_ROOT}/${phase}`;
+  const phaseFindings = findings.map((finding) => ({
+    ...finding,
+    evidencePaths: finding.evidencePaths.map((evidencePath) =>
+      evidencePath.replace(`${RUNTIME_ROOT}/before/`, `${RUNTIME_ROOT}/${phase}/`),
+    ),
+  }));
   return {
     runId: RUN_ID,
     phase,
@@ -71,7 +77,7 @@ function evidence(phase: "before" | "after", findings = Object.values(findingByI
     ariaSnapshotPath: `${root}/aria.yml`,
     axeReportPath: `${root}/axe.json`,
     keyboardTracePath: `${root}/keyboard.json`,
-    findings,
+    findings: phaseFindings,
     journeyChecks: [
       {
         id: "checkout-completes",
@@ -172,6 +178,54 @@ describe("RunManifestSchema", () => {
         }),
       ),
     ).toThrow();
+  });
+
+  it("binds every evidence artifact to its declared phase", () => {
+    const before = evidence("before");
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "analyzing",
+          before: {
+            ...before,
+            screenshotPath: `${RUNTIME_ROOT}/after/screenshot.png`,
+          },
+        }),
+      ),
+    ).toThrow(/phase/i);
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "analyzing",
+          before: {
+            ...before,
+            findings: [
+              {
+                ...before.findings[0],
+                evidencePaths: [`${RUNTIME_ROOT}/after/axe.json`],
+              },
+              ...before.findings.slice(1),
+            ],
+          },
+        }),
+      ),
+    ).toThrow(/phase/i);
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "analyzing",
+          before: {
+            ...before,
+            journeyChecks: [
+              {
+                ...before.journeyChecks[0],
+                evidencePath: `${RUNTIME_ROOT}/after/keyboard.json`,
+              },
+            ],
+          },
+        }),
+      ),
+    ).toThrow(/phase/i);
   });
 
   it("requires one sorted proposal for every baseline finding", () => {
@@ -301,6 +355,124 @@ describe("RunManifestSchema", () => {
     ).toThrow();
   });
 
+  it("rejects a false pass when after evidence still contains findings", () => {
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "passed",
+          before: evidence("before"),
+          after: evidence("after"),
+          proposals,
+          approval,
+          verification: {
+            outcome: "passed",
+            resolvedFindingIds: ["AP-EU-001", "AP-EU-002", "AP-EU-003"],
+            remainingFindingIds: [],
+            regressions: [],
+            checkoutCompleted: true,
+            changedFiles: ["src/checkout/CheckoutPage.tsx"],
+            diffWithinAllowlist: true,
+            diffPath: `${RUNTIME_ROOT}/verification/diff.patch`,
+            failureReasons: [],
+          },
+        }),
+      ),
+    ).toThrow(/after findings/i);
+  });
+
+  it("rejects a passed manifest carrying a workflow error", () => {
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "passed",
+          before: evidence("before"),
+          after: evidence("after", []),
+          proposals,
+          approval,
+          verification: {
+            outcome: "passed",
+            resolvedFindingIds: ["AP-EU-001", "AP-EU-002", "AP-EU-003"],
+            remainingFindingIds: [],
+            regressions: [],
+            checkoutCompleted: true,
+            changedFiles: ["src/checkout/CheckoutPage.tsx"],
+            diffWithinAllowlist: true,
+            diffPath: `${RUNTIME_ROOT}/verification/diff.patch`,
+            failureReasons: [],
+          },
+          error: {
+            code: "CONTRADICTORY_ERROR",
+            stage: "verifying",
+            message: "This must not coexist with a pass.",
+            occurredAt: timestamp,
+            retryable: false,
+          },
+        }),
+      ),
+    ).toThrow(/error/i);
+  });
+
+  it("requires after findings to exactly match remaining findings and regressions", () => {
+    const after = evidence("after", [
+      findingById["AP-EU-001"],
+      findingById["AP-EU-002"],
+    ]);
+    const regression = {
+      ...findingById["AP-EU-003"],
+      evidencePaths: [`${RUNTIME_ROOT}/after/axe.json`],
+    };
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "failed",
+          before: evidence("before"),
+          after,
+          verification: {
+            outcome: "failed",
+            resolvedFindingIds: ["AP-EU-002"],
+            remainingFindingIds: ["AP-EU-001", "AP-EU-003"],
+            regressions: [regression],
+            checkoutCompleted: false,
+            changedFiles: [],
+            diffWithinAllowlist: true,
+            diffPath: `${RUNTIME_ROOT}/verification/diff.patch`,
+            failureReasons: ["A blocker remains."],
+          },
+        }),
+      ),
+    ).toThrow(/after findings/i);
+  });
+
+  it("rejects contradictory failed terminal routes", () => {
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "failed",
+          before: evidence("before"),
+          after: evidence("after"),
+          verification: {
+            outcome: "failed",
+            resolvedFindingIds: [],
+            remainingFindingIds: ["AP-EU-001", "AP-EU-002", "AP-EU-003"],
+            regressions: [],
+            checkoutCompleted: false,
+            changedFiles: [],
+            diffWithinAllowlist: true,
+            diffPath: `${RUNTIME_ROOT}/verification/diff.patch`,
+            failureReasons: ["Checkout remains blocked."],
+          },
+          error: {
+            code: "ALSO_FAILED",
+            stage: "verifying",
+            message: "Only one terminal failure route is allowed.",
+            occurredAt: timestamp,
+            retryable: false,
+          },
+        }),
+      ),
+    ).toThrow(/exactly one/i);
+  });
+
   it("scopes verification regression evidence to the manifest run", () => {
     const regression = {
       ...findingById["AP-EU-001"],
@@ -325,6 +497,33 @@ describe("RunManifestSchema", () => {
         }),
       ),
     ).toThrow(/artifact/i);
+  });
+
+  it("requires regression evidence to use the same run after phase", () => {
+    const regression = {
+      ...findingById["AP-EU-001"],
+      evidencePaths: [`${RUNTIME_ROOT}/before/axe.json`],
+    };
+    expect(() =>
+      RunManifestSchema.parse(
+        manifest({
+          status: "failed",
+          before: evidence("before"),
+          after: evidence("after", [findingById["AP-EU-001"]]),
+          verification: {
+            outcome: "failed",
+            resolvedFindingIds: ["AP-EU-002", "AP-EU-003"],
+            remainingFindingIds: ["AP-EU-001"],
+            regressions: [regression],
+            checkoutCompleted: false,
+            changedFiles: [],
+            diffWithinAllowlist: true,
+            diffPath: `${RUNTIME_ROOT}/verification/diff.patch`,
+            failureReasons: ["A regression appeared."],
+          },
+        }),
+      ),
+    ).toThrow(/after phase/i);
   });
 
   it("accepts an honest pre-verification failed manifest with a structured error", () => {

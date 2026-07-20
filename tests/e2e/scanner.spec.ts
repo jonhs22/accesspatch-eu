@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createHash, randomUUID } from "node:crypto";
+import { inflateRawSync } from "node:zlib";
 import {
   mkdir,
   readFile,
@@ -29,6 +30,45 @@ async function optionalFile(filePath: string): Promise<Buffer | undefined> {
 
 function sha256(bytes: Buffer): string {
   return createHash("sha256").update(bytes).digest("hex");
+}
+
+function zipTextEntries(archive: Buffer): string {
+  let endOfCentralDirectory = archive.length - 22;
+  while (
+    endOfCentralDirectory >= 0 &&
+    archive.readUInt32LE(endOfCentralDirectory) !== 0x06054b50
+  ) {
+    endOfCentralDirectory -= 1;
+  }
+  if (endOfCentralDirectory < 0) throw new Error("Trace archive has no central directory.");
+
+  const entryCount = archive.readUInt16LE(endOfCentralDirectory + 10);
+  let centralOffset = archive.readUInt32LE(endOfCentralDirectory + 16);
+  const textEntries: string[] = [];
+  for (let index = 0; index < entryCount; index += 1) {
+    if (archive.readUInt32LE(centralOffset) !== 0x02014b50) {
+      throw new Error("Invalid trace central-directory entry.");
+    }
+    const compression = archive.readUInt16LE(centralOffset + 10);
+    const compressedSize = archive.readUInt32LE(centralOffset + 20);
+    const nameLength = archive.readUInt16LE(centralOffset + 28);
+    const extraLength = archive.readUInt16LE(centralOffset + 30);
+    const commentLength = archive.readUInt16LE(centralOffset + 32);
+    const localOffset = archive.readUInt32LE(centralOffset + 42);
+    const localNameLength = archive.readUInt16LE(localOffset + 26);
+    const localExtraLength = archive.readUInt16LE(localOffset + 28);
+    const dataOffset = localOffset + 30 + localNameLength + localExtraLength;
+    const compressed = archive.subarray(dataOffset, dataOffset + compressedSize);
+    const entry =
+      compression === 0
+        ? compressed
+        : compression === 8
+          ? inflateRawSync(compressed)
+          : Buffer.alloc(0);
+    textEntries.push(entry.toString("utf8"));
+    centralOffset += 46 + nameLength + extraLength + commentLength;
+  }
+  return textEntries.join("\n");
 }
 
 async function pathExists(candidate: string): Promise<boolean> {
@@ -118,6 +158,10 @@ test("baseline scan atomically publishes deterministic complete evidence", async
       repeatedFocusTargets: string[];
       visibleErrorIsLive: boolean;
       blockedExternalRequests: string[];
+      privacy: {
+        redactedFormControlCount: number;
+        formControlsRedacted: boolean;
+      };
     };
     expect(keyboard.environment).toEqual({
       viewport: { width: 1672, height: 941 },
@@ -129,6 +173,23 @@ test("baseline scan atomically publishes deterministic complete evidence", async
     expect(keyboard.repeatedFocusTargets).toEqual(["email", "email", "email", "email", "email"]);
     expect(keyboard.visibleErrorIsLive).toBe(false);
     expect(keyboard.blockedExternalRequests).toEqual([]);
+    expect(keyboard.privacy.formControlsRedacted).toBe(true);
+    expect(keyboard.privacy.redactedFormControlCount).toBeGreaterThan(0);
+
+    const traceText = zipTextEntries(
+      await readFile(path.join(PROJECT_ROOT, evidence.tracePath)),
+    );
+    expect(traceText).toMatch(/page\.goto|frame\.goto|\"method\":\"goto\"/);
+    const inspectableArtifacts = [
+      dom,
+      aria,
+      JSON.stringify(axe),
+      JSON.stringify(keyboard),
+      traceText,
+    ];
+    for (const artifact of inspectableArtifacts) {
+      expect(artifact).not.toContain("alex.example.com");
+    }
   } finally {
     expect(sha256(await readFile(checkoutSource))).toBe(sha256(sourceBefore));
     await rm(path.join(runtimeDirectory, runId), { recursive: true, force: true });

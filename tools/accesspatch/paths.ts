@@ -2,7 +2,7 @@ import {
   existsSync,
   realpathSync,
 } from "node:fs";
-import { realpath } from "node:fs/promises";
+import { mkdir, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -63,6 +63,39 @@ export async function assertInsideProjectAsync(candidate: string): Promise<strin
   const realParent = await realpath(path.dirname(resolvedCandidate));
   ensureContained(realParent, candidate);
   return path.join(realParent, path.basename(resolvedCandidate));
+}
+
+export async function ensureProjectDirectory(candidate: string): Promise<string> {
+  const resolvedCandidate = path.isAbsolute(candidate)
+    ? path.resolve(candidate)
+    : path.resolve(PROJECT_ROOT, candidate);
+  ensureContained(resolvedCandidate, candidate);
+
+  const missingSegments: string[] = [];
+  let existingAncestor = resolvedCandidate;
+  while (!existsSync(existingAncestor)) {
+    const parent = path.dirname(existingAncestor);
+    if (parent === existingAncestor) {
+      throw new Error(`Cannot find an existing ancestor for project directory: ${candidate}`);
+    }
+    missingSegments.unshift(path.basename(existingAncestor));
+    existingAncestor = parent;
+  }
+
+  let realDirectory = await realpath(existingAncestor);
+  ensureContained(realDirectory, candidate);
+  for (const segment of missingSegments) {
+    const nextDirectory = path.join(realDirectory, segment);
+    ensureContained(nextDirectory, candidate);
+    try {
+      await mkdir(nextDirectory);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    }
+    realDirectory = await realpath(nextDirectory);
+    ensureContained(realDirectory, candidate);
+  }
+  return realDirectory;
 }
 
 export function assertSafeGitPath(candidate: string): string {

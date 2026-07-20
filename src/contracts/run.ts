@@ -261,7 +261,7 @@ export const RunManifestSchema = z
           message: `${field} evidence must use the ${field} phase.`,
         });
       }
-      const expectedPrefix = `public/runs/runtime/${manifest.runId}/`;
+      const expectedPrefix = `public/runs/runtime/${manifest.runId}/${field}/`;
       const artifactPaths = [
         evidence.screenshotPath,
         evidence.tracePath,
@@ -276,7 +276,7 @@ export const RunManifestSchema = z
         context.addIssue({
           code: "custom",
           path: [field],
-          message: "Every evidence artifact path must be scoped to the manifest run ID.",
+          message: "Every evidence artifact path must be scoped to the manifest run ID and phase.",
         });
       }
     }
@@ -317,6 +317,13 @@ export const RunManifestSchema = z
           message: `${manifest.runMode} runs require approval actor ${expectedActor}.`,
         });
       }
+    }
+    if (manifest.error && manifest.status !== "failed") {
+      context.addIssue({
+        code: "custom",
+        path: ["error"],
+        message: "A structured workflow error is valid only on a failed run.",
+      });
     }
     if (requiresApproval) {
       if (manifest.approval?.decision !== "approved") {
@@ -363,15 +370,31 @@ export const RunManifestSchema = z
         manifest.verification.regressions.some((regression) =>
           regression.evidencePaths.some(
             (artifactPath) =>
-              !artifactPath.startsWith(`public/runs/runtime/${manifest.runId}/`),
+              !artifactPath.startsWith(`public/runs/runtime/${manifest.runId}/after/`),
           ),
         )
       ) {
         context.addIssue({
           code: "custom",
           path: ["verification", "regressions"],
-          message: "Regression artifact paths must be scoped to the manifest run ID.",
+          message: "Regression artifact paths must be scoped to the manifest run ID after phase.",
         });
+      }
+      if (manifest.after) {
+        const expectedAfterIds = [
+          ...new Set([
+            ...manifest.verification.remainingFindingIds,
+            ...manifest.verification.regressions.map(({ id }) => id),
+          ]),
+        ].sort();
+        const afterIds = manifest.after.findings.map(({ id }) => id);
+        if (!sameIdentities(afterIds, expectedAfterIds)) {
+          context.addIssue({
+            code: "custom",
+            path: ["after", "findings"],
+            message: "After findings must exactly match remaining findings and regressions.",
+          });
+        }
       }
     }
 
@@ -395,13 +418,17 @@ export const RunManifestSchema = z
     }
 
     if (manifest.status === "failed") {
-      const hasFailedVerification =
+      const hasWorkflowErrorRoute = Boolean(manifest.error && !manifest.verification);
+      const hasFailedVerificationRoute =
+        !manifest.error &&
         manifest.verification?.outcome === "failed" &&
-        manifest.verification.failureReasons.length > 0;
-      if (!manifest.error && !hasFailedVerification) {
+        manifest.verification.failureReasons.length > 0 &&
+        Boolean(manifest.before) &&
+        Boolean(manifest.after);
+      if (Number(hasWorkflowErrorRoute) + Number(hasFailedVerificationRoute) !== 1) {
         context.addIssue({
           code: "custom",
-          message: "Failed runs require a failed verification with a reason or a structured workflow error.",
+          message: "Failed runs require exactly one honest terminal route: a failed verification with evidence and a reason, or a structured workflow error.",
         });
       }
     }

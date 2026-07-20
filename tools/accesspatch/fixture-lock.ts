@@ -1,6 +1,10 @@
-import { mkdir, open, rm } from "node:fs/promises";
+import { open, rm } from "node:fs/promises";
 import path from "node:path";
-import { PROJECT_ROOT, assertInsideProject } from "./paths.js";
+import {
+  PROJECT_ROOT,
+  assertInsideProject,
+  ensureProjectDirectory,
+} from "./paths.js";
 
 async function delay(milliseconds: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -11,7 +15,7 @@ export async function withFixtureLock<T>(
   projectRoot = PROJECT_ROOT,
 ): Promise<T> {
   const runsDirectory = path.join(assertInsideProject(projectRoot), "public", "runs");
-  await mkdir(runsDirectory, { recursive: true });
+  await ensureProjectDirectory(runsDirectory);
   const lockPath = assertInsideProject(path.join(runsDirectory, ".fixture-reset.lock"));
 
   let lockHandle;

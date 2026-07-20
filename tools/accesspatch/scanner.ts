@@ -1,8 +1,8 @@
 import { AxeBuilder } from "@axe-core/playwright";
-import { chromium, type BrowserContext, type Page } from "playwright";
+import { chromium } from "playwright";
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdir, open, readFile } from "node:fs/promises";
+import { open, readFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import {
@@ -17,8 +17,23 @@ import {
   runKeyboardJourney,
   type KeyboardEnvironment,
 } from "./keyboard-journey.js";
-import { PROJECT_ROOT, assertInsideProject, assertSafeGitPath } from "./paths.js";
+import {
+  PROJECT_ROOT,
+  assertInsideProject,
+  assertSafeGitPath,
+  ensureProjectDirectory,
+} from "./paths.js";
 import { RunStore, type RunStoreExpectation } from "./run-store.js";
+import {
+  captureSanitizedDom,
+  captureSanitizedOuterHtml,
+  scrubPageFormData,
+} from "./scanner-artifacts.js";
+import { withBrowserContext } from "./scanner-lifecycle.js";
+import {
+  buildBrowserContextOptions,
+  installNetworkIsolation,
+} from "./scanner-policy.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -92,58 +107,6 @@ function sortAxeResults(results: AxeResult): AxeResult {
   };
 }
 
-async function sanitizedDom(page: Page): Promise<string> {
-  return page.evaluate(() => {
-    const clone = document.documentElement.cloneNode(true) as HTMLElement;
-    clone.querySelectorAll("script, noscript").forEach((element) => element.remove());
-    clone.querySelectorAll("input, textarea, select").forEach((element) => {
-      element.removeAttribute("value");
-      element.removeAttribute("checked");
-      element.removeAttribute("selected");
-    });
-    return `<!doctype html>\n${clone.outerHTML}\n`;
-  });
-}
-
-async function sanitizedOuterHtml(page: Page, selector: string): Promise<string> {
-  return page.locator(selector).evaluate((element) => {
-    const clone = element.cloneNode(true) as HTMLElement;
-    clone.querySelectorAll("input, textarea, select").forEach((control) => {
-      control.removeAttribute("value");
-      control.removeAttribute("checked");
-      control.removeAttribute("selected");
-    });
-    clone.removeAttribute("value");
-    return clone.outerHTML;
-  });
-}
-
-function isPermittedRequest(url: string): boolean {
-  const parsed = new URL(url);
-  if (["data:", "blob:", "about:"].includes(parsed.protocol)) return true;
-  return (
-    (parsed.protocol === "http:" || parsed.protocol === "https:") &&
-    (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") &&
-    parsed.username === "" &&
-    parsed.password === ""
-  );
-}
-
-async function configureLocalNetworkOnly(
-  context: BrowserContext,
-  blockedExternalRequests: string[],
-): Promise<void> {
-  await context.route("**/*", async (route) => {
-    const url = route.request().url();
-    if (isPermittedRequest(url)) {
-      await route.continue();
-      return;
-    }
-    blockedExternalRequests.push(url);
-    await route.abort("blockedbyclient");
-  });
-}
-
 async function repositoryCommit(): Promise<string> {
   const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], {
     cwd: PROJECT_ROOT,
@@ -184,13 +147,13 @@ async function captureEvidence(
   const artifactRoot = assertInsideProject(
     path.join(PROJECT_ROOT, config.artifactRoot),
   );
-  await mkdir(artifactRoot, { recursive: true });
+  await ensureProjectDirectory(artifactRoot);
   const runDirectory = assertInsideProject(
     path.join(artifactRoot, manifest.runId),
   );
-  await mkdir(runDirectory, { recursive: true });
+  await ensureProjectDirectory(runDirectory);
   const phaseDirectory = assertInsideProject(path.join(runDirectory, phase));
-  await mkdir(phaseDirectory, { recursive: true });
+  await ensureProjectDirectory(phaseDirectory);
 
   const absolutePaths = Object.fromEntries(
     Object.entries(relativePaths).map(([key, value]) => [
@@ -201,107 +164,113 @@ async function captureEvidence(
 
   const environment: KeyboardEnvironment = config.browser;
   const blockedExternalRequests: string[] = [];
-  const browser = await chromium.launch();
-  const context = await browser.newContext({
-    viewport: environment.viewport,
-    deviceScaleFactor: environment.deviceScaleFactor,
-    locale: environment.locale,
-    reducedMotion: environment.reducedMotion,
+  return withBrowserContext({
+    launch: () => chromium.launch(),
+    contextOptions: buildBrowserContextOptions(environment),
+    run: async (context) => {
+      let traceStarted = false;
+      try {
+        await installNetworkIsolation(context, blockedExternalRequests);
+        await context.tracing.start({
+          screenshots: false,
+          snapshots: false,
+          sources: false,
+        });
+        traceStarted = true;
+        const page = await context.newPage();
+        await page.goto(config.targetUrl, { waitUntil: "networkidle" });
+
+        const journey = await runKeyboardJourney(
+          page,
+          environment,
+          relativePaths.keyboard,
+          blockedExternalRequests,
+        );
+        const privacy = await scrubPageFormData(page);
+        const axeResults = sortAxeResults(
+          (await new AxeBuilder({ page }).analyze()) as unknown as AxeResult,
+        );
+        const [dom, aria, paymentHtml, emailHtml, errorHtml] = await Promise.all([
+          captureSanitizedDom(page),
+          page.locator("body").ariaSnapshot(),
+          captureSanitizedOuterHtml(page.locator('[data-testid="payment-submit"]')),
+          captureSanitizedOuterHtml(page.locator('[data-testid="email"]')),
+          captureSanitizedOuterHtml(page.locator('[data-testid="form-error"]')),
+        ]);
+        const keyboardTrace = {
+          ...journey.trace,
+          blockedExternalRequests: [...blockedExternalRequests].sort(),
+          privacy,
+        };
+
+        await page.screenshot({ path: absolutePaths.screenshot, fullPage: true });
+        await writeClosedFile(absolutePaths.dom, dom);
+        await writeClosedFile(absolutePaths.aria, `${aria.trimEnd()}\n`);
+        await writeClosedFile(
+          absolutePaths.axe,
+          `${JSON.stringify(axeResults, null, 2)}\n`,
+        );
+        await writeClosedFile(
+          absolutePaths.keyboard,
+          `${JSON.stringify(keyboardTrace, null, 2)}\n`,
+        );
+        await context.tracing.stop({ path: absolutePaths.trace });
+        traceStarted = false;
+
+        if (blockedExternalRequests.length > 0) {
+          throw new Error(
+            `Scanner blocked external network requests: ${blockedExternalRequests.sort().join(", ")}`,
+          );
+        }
+
+        const checkoutSource = await readFile(
+          assertInsideProject("src/checkout/CheckoutPage.tsx"),
+          "utf8",
+        );
+        const sourceMarkers = [...new Set(checkoutSource.match(/ACCESSPATCH-DEMO-00[1-3]/g) ?? [])].sort();
+        const unnamedPaymentButton = axeResults.violations.some(
+          (rule) =>
+            rule.id === "button-name" &&
+            rule.nodes.some((node) => JSON.stringify(node.target).includes("payment-submit")),
+        );
+        const findings = buildFindings({
+          axeButtonUnnamed: unnamedPaymentButton,
+          repeatedFocusTargets: journey.trace.repeatedFocusTargets,
+          visibleErrorIsLive: journey.trace.visibleErrorIsLive,
+          sourceMarkers,
+          evidencePaths: {
+            axe: relativePaths.axe,
+            aria: relativePaths.aria,
+            keyboard: relativePaths.keyboard,
+          },
+          htmlExcerpts: {
+            payment: paymentHtml,
+            email: emailHtml,
+            error: errorHtml,
+          },
+        });
+
+        return {
+          runId: manifest.runId,
+          phase,
+          url: config.targetUrl,
+          capturedAt: new Date().toISOString(),
+          screenshotPath: relativePaths.screenshot,
+          tracePath: relativePaths.trace,
+          domPath: relativePaths.dom,
+          ariaSnapshotPath: relativePaths.aria,
+          axeReportPath: relativePaths.axe,
+          keyboardTracePath: relativePaths.keyboard,
+          findings,
+          journeyChecks: journey.journeyChecks,
+        };
+      } finally {
+        if (traceStarted) {
+          await context.tracing.stop({ path: absolutePaths.trace }).catch(() => undefined);
+        }
+      }
+    },
   });
-  let traceStarted = false;
-
-  try {
-    await configureLocalNetworkOnly(context, blockedExternalRequests);
-    await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
-    traceStarted = true;
-    const page = await context.newPage();
-    await page.goto(config.targetUrl, { waitUntil: "networkidle" });
-
-    const journey = await runKeyboardJourney(
-      page,
-      environment,
-      relativePaths.keyboard,
-      blockedExternalRequests,
-    );
-    const axeResults = sortAxeResults(
-      (await new AxeBuilder({ page }).analyze()) as unknown as AxeResult,
-    );
-    const [dom, aria, paymentHtml, emailHtml, errorHtml] = await Promise.all([
-      sanitizedDom(page),
-      page.locator("body").ariaSnapshot(),
-      sanitizedOuterHtml(page, '[data-testid="payment-submit"]'),
-      sanitizedOuterHtml(page, '[data-testid="email"]'),
-      sanitizedOuterHtml(page, '[data-testid="form-error"]'),
-    ]);
-
-    await page.screenshot({ path: absolutePaths.screenshot, fullPage: true });
-    await writeClosedFile(absolutePaths.dom, dom);
-    await writeClosedFile(absolutePaths.aria, `${aria.trimEnd()}\n`);
-    await writeClosedFile(
-      absolutePaths.axe,
-      `${JSON.stringify(axeResults, null, 2)}\n`,
-    );
-    await writeClosedFile(
-      absolutePaths.keyboard,
-      `${JSON.stringify(journey.trace, null, 2)}\n`,
-    );
-    await context.tracing.stop({ path: absolutePaths.trace });
-    traceStarted = false;
-
-    if (blockedExternalRequests.length > 0) {
-      throw new Error(
-        `Scanner blocked external network requests: ${blockedExternalRequests.sort().join(", ")}`,
-      );
-    }
-
-    const checkoutSource = await readFile(
-      assertInsideProject("src/checkout/CheckoutPage.tsx"),
-      "utf8",
-    );
-    const sourceMarkers = [...new Set(checkoutSource.match(/ACCESSPATCH-DEMO-00[1-3]/g) ?? [])].sort();
-    const unnamedPaymentButton = axeResults.violations.some(
-      (rule) =>
-        rule.id === "button-name" &&
-        rule.nodes.some((node) => JSON.stringify(node.target).includes("payment-submit")),
-    );
-    const findings = buildFindings({
-      axeButtonUnnamed: unnamedPaymentButton,
-      repeatedFocusTargets: journey.trace.repeatedFocusTargets,
-      visibleErrorIsLive: journey.trace.visibleErrorIsLive,
-      sourceMarkers,
-      evidencePaths: {
-        axe: relativePaths.axe,
-        aria: relativePaths.aria,
-        keyboard: relativePaths.keyboard,
-      },
-      htmlExcerpts: {
-        payment: paymentHtml,
-        email: emailHtml,
-        error: errorHtml,
-      },
-    });
-
-    return {
-      runId: manifest.runId,
-      phase,
-      url: config.targetUrl,
-      capturedAt: new Date().toISOString(),
-      screenshotPath: relativePaths.screenshot,
-      tracePath: relativePaths.trace,
-      domPath: relativePaths.dom,
-      ariaSnapshotPath: relativePaths.aria,
-      axeReportPath: relativePaths.axe,
-      keyboardTracePath: relativePaths.keyboard,
-      findings,
-      journeyChecks: journey.journeyChecks,
-    };
-  } finally {
-    if (traceStarted) {
-      await context.tracing.stop({ path: absolutePaths.trace }).catch(() => undefined);
-    }
-    await context.close().catch(() => undefined);
-    await browser.close().catch(() => undefined);
-  }
 }
 
 async function failedManifest(
