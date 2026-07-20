@@ -73,13 +73,23 @@ export const RunStatusSchema = z.enum([
 ]);
 export type RunStatus = z.infer<typeof RunStatusSchema>;
 
+const LocalTargetUrlSchema = z.string().url().refine((value) => {
+  const url = new URL(value);
+  return (
+    (url.protocol === "http:" || url.protocol === "https:") &&
+    (url.hostname === "localhost" || url.hostname === "127.0.0.1") &&
+    url.username === "" &&
+    url.password === ""
+  );
+}, "Target URL must be an unauthenticated http(s) localhost or 127.0.0.1 URL.");
+
 export const RunManifestSchema = z
   .object({
     schemaVersion: z.literal(1),
     runId: z.string().min(1),
     status: RunStatusSchema,
-    targetUrl: z.url(),
-    editableRoots: z.array(z.string().min(1)).min(1),
+    targetUrl: LocalTargetUrlSchema,
+    editableRoots: z.tuple([z.literal("src/checkout")]),
     findings: z.array(FindingIdSchema).default([]),
     evidence: EvidenceSetSchema.default({ before: [], after: [] }),
     journeyChecks: z.array(JourneyCheckSchema).default([]),
@@ -92,12 +102,20 @@ export const RunManifestSchema = z
       context.addIssue({ code: "custom", message: "Awaiting approval requires at least one proposal." });
     }
 
-    if (manifest.status === "patching" && manifest.approval?.decision !== "approved") {
-      context.addIssue({ code: "custom", message: "Patching requires approved human approval." });
-    }
-
-    if (manifest.status === "verifying" && !manifest.approval) {
-      context.addIssue({ code: "custom", message: "Verifying requires a human approval decision." });
+    if (manifest.status === "patching" || manifest.status === "verifying") {
+      if (manifest.approval?.decision !== "approved") {
+        context.addIssue({ code: "custom", message: `${manifest.status} requires approved human approval.` });
+      } else if (manifest.approval.approvedProposalIds.length === 0) {
+        context.addIssue({ code: "custom", message: `${manifest.status} requires an approved proposal.` });
+      } else {
+        const proposalIds = new Set(manifest.proposals.map((proposal) => proposal.id));
+        if (manifest.approval.approvedProposalIds.some((id) => !proposalIds.has(id))) {
+          context.addIssue({
+            code: "custom",
+            message: "Every approved proposal ID must correspond to a manifest proposal.",
+          });
+        }
+      }
     }
 
     if (manifest.status === "passed" && manifest.verification?.outcome !== "passed") {
