@@ -1,0 +1,92 @@
+[Script Info]
+Title: AccessPatch EU Build Week demo
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: AccessPatch,Segoe UI,48,&H00F5F4EE,&H000000FF,&H0007100D,&HC007100D,-1,0,0,0,100,100,0,0,3,2,0,2,120,120,96,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.35,0:00:02.41,AccessPatch,,0,0,0,,A checkout can look finished
+Dialogue: 0,0:00:02.46,0:00:04.52,AccessPatch,,0,0,0,,and still stop a keyboard
+Dialogue: 0,0:00:04.57,0:00:06.62,AccessPatch,,0,0,0,,user cold. AccessPatch EU turns
+Dialogue: 0,0:00:06.67,0:00:08.73,AccessPatch,,0,0,0,,that failure into an evidence-backed
+Dialogue: 0,0:00:08.78,0:00:10.84,AccessPatch,,0,0,0,,patch, then proves the same
+Dialogue: 0,0:00:10.89,0:00:12.95,AccessPatch,,0,0,0,,journey works. Here is the
+Dialogue: 0,0:00:13.00,0:00:15.06,AccessPatch,,0,0,0,,synthetic Lattice Supply checkout. I
+Dialogue: 0,0:00:15.11,0:00:17.16,AccessPatch,,0,0,0,,start secure checkout using only
+Dialogue: 0,0:00:17.21,0:00:19.27,AccessPatch,,0,0,0,,the keyboard. The email receives
+Dialogue: 0,0:00:19.32,0:00:21.38,AccessPatch,,0,0,0,,focus, but every Tab is
+Dialogue: 0,0:00:21.43,0:00:23.49,AccessPatch,,0,0,0,,intercepted and returned to it.
+Dialogue: 0,0:00:23.54,0:00:25.60,AccessPatch,,0,0,0,,Five presses later, focus has
+Dialogue: 0,0:00:25.65,0:00:27.70,AccessPatch,,0,0,0,,not moved. The payment control
+Dialogue: 0,0:00:27.75,0:00:29.81,AccessPatch,,0,0,0,,is unnamed, and the visible
+Dialogue: 0,0:00:29.86,0:00:31.92,AccessPatch,,0,0,0,,validation error is silent to
+Dialogue: 0,0:00:31.97,0:00:34.03,AccessPatch,,0,0,0,,assistive technology. AccessPatch reruns that
+Dialogue: 0,0:00:34.08,0:00:36.14,AccessPatch,,0,0,0,,exact journey with Playwright and
+Dialogue: 0,0:00:36.19,0:00:38.25,AccessPatch,,0,0,0,,axe-core. It records the keyboard
+Dialogue: 0,0:00:38.30,0:00:40.35,AccessPatch,,0,0,0,,trace, DOM and accessibility evidence,
+Dialogue: 0,0:00:40.40,0:00:42.46,AccessPatch,,0,0,0,,a screenshot, and source hints.
+Dialogue: 0,0:00:42.51,0:00:44.57,AccessPatch,,0,0,0,,The baseline ends with three
+Dialogue: 0,0:00:44.62,0:00:46.68,AccessPatch,,0,0,0,,stable blocker IDs, not a
+Dialogue: 0,0:00:46.73,0:00:48.79,AccessPatch,,0,0,0,,vague checklist. The evidence view
+Dialogue: 0,0:00:48.84,0:00:50.89,AccessPatch,,0,0,0,,connects each runtime failure to
+Dialogue: 0,0:00:50.94,0:00:53.00,AccessPatch,,0,0,0,,a source marker: A P
+Dialogue: 0,0:00:53.05,0:00:55.11,AccessPatch,,0,0,0,,E U zero zero one
+Dialogue: 0,0:00:55.16,0:00:57.22,AccessPatch,,0,0,0,,for the unnamed control, zero
+Dialogue: 0,0:00:57.27,0:00:59.33,AccessPatch,,0,0,0,,zero two for repeated focus,
+Dialogue: 0,0:00:59.38,0:01:01.43,AccessPatch,,0,0,0,,and zero zero three for
+Dialogue: 0,0:01:01.48,0:01:03.54,AccessPatch,,0,0,0,,the unannounced error. This is
+Dialogue: 0,0:01:03.59,0:01:05.65,AccessPatch,,0,0,0,,a bounded, synthetic localhost target;
+Dialogue: 0,0:01:05.70,0:01:07.76,AccessPatch,,0,0,0,,no customer or payment data
+Dialogue: 0,0:01:07.81,0:01:09.87,AccessPatch,,0,0,0,,leaves the machine. Inside the
+Dialogue: 0,0:01:09.92,0:01:11.97,AccessPatch,,0,0,0,,signed-in Codex workflow, GPT-5.6 reads
+Dialogue: 0,0:01:12.02,0:01:14.08,AccessPatch,,0,0,0,,those artifacts and correlates behavior
+Dialogue: 0,0:01:14.13,0:01:16.19,AccessPatch,,0,0,0,,with the responsible React source.
+Dialogue: 0,0:01:16.24,0:01:18.30,AccessPatch,,0,0,0,,It proposes the smallest behavioral
+Dialogue: 0,0:01:18.35,0:01:20.41,AccessPatch,,0,0,0,,changes: add an accessible name,
+Dialogue: 0,0:01:20.46,0:01:22.51,AccessPatch,,0,0,0,,remove the Tab trap, and
+Dialogue: 0,0:01:22.56,0:01:24.62,AccessPatch,,0,0,0,,announce validation while returning focus
+Dialogue: 0,0:01:24.67,0:01:26.73,AccessPatch,,0,0,0,,to the invalid field. Deterministic
+Dialogue: 0,0:01:26.78,0:01:28.84,AccessPatch,,0,0,0,,tests, not the model, decide
+Dialogue: 0,0:01:28.89,0:01:30.95,AccessPatch,,0,0,0,,whether the repair passes. Crucially,
+Dialogue: 0,0:01:31.00,0:01:33.05,AccessPatch,,0,0,0,,nothing is edited yet. AccessPatch
+Dialogue: 0,0:01:33.10,0:01:35.16,AccessPatch,,0,0,0,,shows the candidate files, intended
+Dialogue: 0,0:01:35.21,0:01:37.27,AccessPatch,,0,0,0,,behavior, and editable root. A
+Dialogue: 0,0:01:37.32,0:01:39.38,AccessPatch,,0,0,0,,human must explicitly approve. Only
+Dialogue: 0,0:01:39.43,0:01:41.49,AccessPatch,,0,0,0,,then may Codex patch source
+Dialogue: 0,0:01:41.54,0:01:43.59,AccessPatch,,0,0,0,,slash checkout, and an allowlist
+Dialogue: 0,0:01:43.64,0:01:45.70,AccessPatch,,0,0,0,,rejects any diff outside that
+Dialogue: 0,0:01:45.75,0:01:47.81,AccessPatch,,0,0,0,,boundary. After approval, the constrained
+Dialogue: 0,0:01:47.86,0:01:49.92,AccessPatch,,0,0,0,,diff changes only the evidence-backed
+Dialogue: 0,0:01:49.97,0:01:52.03,AccessPatch,,0,0,0,,behavior. AccessPatch scans again and
+Dialogue: 0,0:01:52.08,0:01:54.14,AccessPatch,,0,0,0,,replays the original keyboard journey.
+Dialogue: 0,0:01:54.19,0:01:56.24,AccessPatch,,0,0,0,,This time Tab advances through
+Dialogue: 0,0:01:56.29,0:01:58.35,AccessPatch,,0,0,0,,the dialog, the payment action
+Dialogue: 0,0:01:58.40,0:02:00.46,AccessPatch,,0,0,0,,has a useful name, invalid
+Dialogue: 0,0:02:00.51,0:02:02.57,AccessPatch,,0,0,0,,input is announced, and a
+Dialogue: 0,0:02:02.62,0:02:04.68,AccessPatch,,0,0,0,,valid keyboard submission reaches order
+Dialogue: 0,0:02:04.73,0:02:06.78,AccessPatch,,0,0,0,,confirmation. The verification receipt compares
+Dialogue: 0,0:02:06.83,0:02:08.89,AccessPatch,,0,0,0,,before and after: all three
+Dialogue: 0,0:02:08.94,0:02:11.00,AccessPatch,,0,0,0,,known critical fixture blockers were
+Dialogue: 0,0:02:11.05,0:02:13.11,AccessPatch,,0,0,0,,resolved, no new critical axe
+Dialogue: 0,0:02:13.16,0:02:15.22,AccessPatch,,0,0,0,,finding appeared, the scripted keyboard
+Dialogue: 0,0:02:15.27,0:02:17.32,AccessPatch,,0,0,0,,checkout completed, and the diff
+Dialogue: 0,0:02:17.37,0:02:19.43,AccessPatch,,0,0,0,,remained inside the editable root.
+Dialogue: 0,0:02:19.48,0:02:21.54,AccessPatch,,0,0,0,,Every claim links back to
+Dialogue: 0,0:02:21.59,0:02:23.65,AccessPatch,,0,0,0,,captured evidence and the approved
+Dialogue: 0,0:02:23.70,0:02:25.76,AccessPatch,,0,0,0,,source change. I built this
+Dialogue: 0,0:02:25.81,0:02:27.86,AccessPatch,,0,0,0,,during OpenAI Build Week with
+Dialogue: 0,0:02:27.91,0:02:29.97,AccessPatch,,0,0,0,,Codex and GPT-5.6: architecture, tests,
+Dialogue: 0,0:02:30.02,0:02:32.08,AccessPatch,,0,0,0,,scanner, guarded workflow, plugin, dashboard,
+Dialogue: 0,0:02:32.13,0:02:34.19,AccessPatch,,0,0,0,,and submission tooling. The primary
+Dialogue: 0,0:02:34.24,0:02:36.30,AccessPatch,,0,0,0,,workflow uses the signed-in Codex
+Dialogue: 0,0:02:36.35,0:02:38.40,AccessPatch,,0,0,0,,client, so it needs no
+Dialogue: 0,0:02:38.45,0:02:40.51,AccessPatch,,0,0,0,,OpenAI Platform API key. AccessPatch
+Dialogue: 0,0:02:40.56,0:02:42.62,AccessPatch,,0,0,0,,EU provides technical remediation evidence,
+Dialogue: 0,0:02:42.67,0:02:45.15,AccessPatch,,0,0,0,,not legal advice or accessibility certification.

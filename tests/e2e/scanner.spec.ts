@@ -169,7 +169,15 @@ test("baseline scan atomically publishes deterministic complete evidence", async
       locale: "en",
       reducedMotion: "reduce",
     });
-    expect(keyboard.steps.map(({ key }) => key)).toEqual(["Enter", "Tab", "Tab", "Tab", "Tab", "Tab"]);
+    expect(keyboard.steps.map(({ key }) => key)).toEqual([
+      "Enter",
+      "Tab",
+      "Tab",
+      "Tab",
+      "Tab",
+      "Tab",
+      "Tab",
+    ]);
     expect(keyboard.repeatedFocusTargets).toEqual(["email", "email", "email", "email", "email"]);
     expect(keyboard.visibleErrorIsLive).toBe(false);
     expect(keyboard.blockedExternalRequests).toEqual([]);

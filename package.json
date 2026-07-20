@@ -5,14 +5,17 @@
   "description": "Codex-native accessibility repair and verification loop",
   "license": "MIT",
   "type": "module",
-  "engines": { "node": ">=24.18.0" },
+  "engines": {
+    "node": ">=24.18.0"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 4173",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --grep-invert @media",
+    "test:media": "playwright test tests/e2e/media-contract.spec.ts",
     "accesspatch": "tsx tools/accesspatch/cli.ts",
     "scan:before": "npm run accesspatch -- scan --phase before",
     "scan:after": "npm run accesspatch -- scan --phase after",
@@ -27,6 +30,7 @@
     "@vitejs/plugin-react": "6.0.3",
     "axe-core": "4.12.1",
     "commander": "15.0.0",
+    "fflate": "0.8.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "vite": "8.1.5",

@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Segoe UI";
+        src: local("Segoe UI");
+        font-style: normal;
+        font-weight: 100 900;
+      }
+
+      @font-face {
+        font-family: "Cascadia Mono";
+        src: local("Cascadia Mono");
+        font-style: normal;
+        font-weight: 100 900;
+      }
+
+      :root {
+        --ink: #07100d;
+        --ink-soft: #111815;
+        --paper: #f5f4ee;
+        --paper-muted: #deddd5;
+        --mint: #9effb8;
+        --mint-dark: #1e6b43;
+        --coral: #ff6b5f;
+        --coral-dark: #7d261f;
+        --line: #29342f;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        position: relative;
+      }
+
+      code,
+      pre,
+      .mono {
+        font-family: "Cascadia Mono", Consolas, monospace;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ink);
+      }
+
+      .clip {
+        position: absolute;
+      }
+
+      .scene {
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        padding: 74px 92px 190px;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      .scene.dark {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .top-rail {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 58px;
+        border-bottom: 2px solid currentColor;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 92px;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .rail-meta {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .dot {
+        width: 13px;
+        height: 13px;
+        display: inline-block;
+        background: var(--mint);
+        border: 2px solid currentColor;
+        border-radius: 50%;
+        margin-right: 9px;
+      }
+
+      .eyebrow {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+      }
+
+      h1,
+      h2 {
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: 0.95;
+      }
+
+      h1 {
+        font-size: 122px;
+        max-width: 1460px;
+      }
+
+      h2 {
+        font-size: 78px;
+      }
+
+      .lede {
+        font-size: 35px;
+        line-height: 1.28;
+        max-width: 1180px;
+        margin-top: 34px;
+      }
+
+      .mint {
+        color: var(--mint);
+      }
+
+      .coral {
+        color: var(--coral-dark);
+      }
+
+      .rule {
+        height: 2px;
+        width: 100%;
+        background: currentColor;
+        opacity: 0.7;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 72px;
+        align-items: end;
+        height: 100%;
+      }
+
+      .signal-column {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        align-self: center;
+      }
+
+      .signal-card {
+        border: 2px solid var(--paper);
+        padding: 22px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 21px;
+      }
+
+      .signal-card.active {
+        background: var(--mint);
+        color: var(--ink);
+        border-color: var(--mint);
+      }
+
+      .screen-layout {
+        display: grid;
+        grid-template-columns: 1.52fr 0.48fr;
+        gap: 42px;
+        align-items: center;
+        height: 100%;
+      }
+
+      .browser-frame {
+        position: relative;
+        background: var(--ink-soft);
+        border: 3px solid var(--ink);
+        padding: 14px;
+        box-shadow: 18px 18px 0 var(--ink);
+      }
+
+      .browser-bar {
+        height: 40px;
+        border-bottom: 2px solid #67706b;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 4px 13px;
+      }
+
+      .browser-bar i {
+        display: block;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: var(--coral);
+      }
+
+      .browser-bar i:nth-child(2) {
+        background: #e7bf68;
+      }
+
+      .browser-bar i:nth-child(3) {
+        background: var(--mint);
+      }
+
+      .browser-frame img {
+        width: 100%;
+        height: 688px;
+        display: block;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .keyboard-panel {
+        border-left: 3px solid var(--ink);
+        padding-left: 35px;
+      }
+
+      .key {
+        width: 178px;
+        height: 102px;
+        border: 4px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--paper);
+        box-shadow: 10px 10px 0 var(--ink);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 40px;
+        font-weight: 800;
+        margin: 34px 0 42px;
+      }
+
+      .blocked-count {
+        font-size: 102px;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--coral-dark);
+      }
+
+      .blocked-label {
+        font-size: 25px;
+        line-height: 1.3;
+        margin-top: 8px;
+      }
+
+      .image-stage {
+        position: relative;
+        width: 100%;
+        height: 730px;
+        border: 3px solid var(--ink);
+        background: var(--ink-soft);
+        overflow: hidden;
+        box-shadow: 18px 18px 0 var(--ink);
+      }
+
+      .image-stage img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 9px;
+        background: var(--mint);
+        box-shadow: 0 0 26px rgba(158, 255, 184, 0.95);
+      }
+
+      .scan-badge {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        padding: 12px 17px;
+        background: var(--ink);
+        color: var(--mint);
+        border: 2px solid var(--mint);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 19px;
+        text-transform: uppercase;
+      }
+
+      .evidence-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 32px;
+      }
+
+      .counter {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 22px;
+        border: 2px solid var(--ink);
+        padding: 12px 17px;
+      }
+
+      .id-layout {
+        display: grid;
+        grid-template-columns: 1.12fr 0.88fr;
+        gap: 62px;
+        height: 100%;
+        align-items: center;
+      }
+
+      .finding-list {
+        border-top: 3px solid var(--paper);
+      }
+
+      .finding-row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 24px;
+        border-bottom: 2px solid #65706b;
+        padding: 28px 0;
+        align-items: center;
+      }
+
+      .finding-id {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        color: var(--coral);
+        font-size: 26px;
+        font-weight: 800;
+      }
+
+      .finding-text {
+        font-size: 30px;
+        line-height: 1.2;
+      }
+
+      .privacy-card {
+        background: var(--mint);
+        color: var(--ink);
+        padding: 48px;
+        border: 3px solid var(--paper);
+        box-shadow: 18px 18px 0 var(--paper);
+      }
+
+      .privacy-card strong {
+        font-size: 58px;
+        line-height: 1;
+        display: block;
+        margin-bottom: 24px;
+      }
+
+      .privacy-card p {
+        font-size: 28px;
+        line-height: 1.35;
+      }
+
+      .correlation-layout {
+        display: grid;
+        grid-template-columns: 0.72fr 1.28fr;
+        gap: 54px;
+        height: 100%;
+        align-items: center;
+      }
+
+      .model-card {
+        border: 3px solid var(--paper);
+        padding: 44px;
+        min-height: 560px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .model-name {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 24px;
+        text-transform: uppercase;
+        color: var(--mint);
+      }
+
+      .model-card h2 {
+        font-size: 76px;
+      }
+
+      .model-card p {
+        font-size: 28px;
+        line-height: 1.3;
+      }
+
+      .code-board {
+        background: var(--paper);
+        color: var(--ink);
+        border: 3px solid var(--mint);
+        padding: 38px;
+        box-shadow: 18px 18px 0 var(--mint);
+      }
+
+      .proposal {
+        border-bottom: 2px solid var(--line);
+        padding: 21px 0;
+      }
+
+      .proposal:last-child {
+        border-bottom: 0;
+      }
+
+      .proposal-id {
+        color: var(--coral-dark);
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      .proposal p {
+        font-size: 25px;
+        line-height: 1.3;
+      }
+
+      .test-decision {
+        margin-top: 26px;
+        border: 2px solid var(--ink);
+        padding: 18px;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 21px;
+        background: var(--mint);
+      }
+
+      .approval-layout {
+        display: grid;
+        grid-template-columns: 1.5fr 0.5fr;
+        gap: 44px;
+        height: 100%;
+        align-items: center;
+      }
+
+      .approval-layout .image-stage {
+        height: 736px;
+      }
+
+      .gate {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        border-left: 3px solid var(--ink);
+        padding-left: 34px;
+      }
+
+      .gate-state {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 20px;
+        text-transform: uppercase;
+        border: 2px solid var(--ink);
+        padding: 15px;
+      }
+
+      .gate-state.locked {
+        background: var(--coral);
+      }
+
+      .gate-state.approved {
+        background: var(--mint);
+      }
+
+      .gate-arrow {
+        font-size: 64px;
+        line-height: 1;
+        margin-left: 28px;
+      }
+
+      .diff-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 46px;
+        height: 100%;
+        align-items: center;
+      }
+
+      .diff-board {
+        border: 3px solid var(--paper);
+        background: #0b1511;
+        padding: 35px;
+        height: 650px;
+        overflow: hidden;
+      }
+
+      .diff-board .file {
+        font-size: 20px;
+        color: var(--mint);
+        border-bottom: 2px solid #53605a;
+        padding-bottom: 16px;
+        margin-bottom: 21px;
+      }
+
+      .diff-line {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 20px;
+        line-height: 1.65;
+        white-space: pre-wrap;
+      }
+
+      .diff-line.minus {
+        color: #ffb4ad;
+        background: #341b18;
+      }
+
+      .diff-line.plus {
+        color: #b9ffca;
+        background: #123421;
+      }
+
+      .journey {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .journey-step {
+        display: grid;
+        grid-template-columns: 68px 1fr auto;
+        align-items: center;
+        border-bottom: 2px solid #65706b;
+        padding: 20px 0;
+        font-size: 28px;
+      }
+
+      .journey-step .index {
+        color: var(--mint);
+        font-family: "Cascadia Mono", Consolas, monospace;
+      }
+
+      .journey-step .pass {
+        color: var(--mint);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 20px;
+      }
+
+      .sweep {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(158, 255, 184, 0.2);
+        border-right: 10px solid var(--mint);
+        pointer-events: none;
+      }
+
+      .receipt-layout {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 52px;
+        height: 100%;
+        align-items: center;
+      }
+
+      .receipt-layout .image-stage {
+        height: 728px;
+      }
+
+      .receipt-stats {
+        display: flex;
+        flex-direction: column;
+        border-top: 3px solid var(--ink);
+      }
+
+      .stat {
+        border-bottom: 2px solid var(--ink);
+        padding: 25px 0;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 68px;
+        line-height: 1;
+      }
+
+      .stat span {
+        display: block;
+        font-size: 24px;
+        line-height: 1.25;
+        margin-top: 8px;
+      }
+
+      .final-layout {
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 70px;
+        align-items: center;
+      }
+
+      .contribution-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 42px;
+      }
+
+      .contribution {
+        border: 2px solid var(--paper);
+        padding: 16px 19px;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 20px;
+      }
+
+      .final-proof {
+        border: 3px solid var(--mint);
+        padding: 42px;
+        box-shadow: 18px 18px 0 var(--mint);
+      }
+
+      .final-proof .big {
+        color: var(--mint);
+        font-size: 60px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 26px;
+      }
+
+      .final-proof p {
+        font-size: 27px;
+        line-height: 1.36;
+      }
+
+      .disclaimer {
+        margin-top: 28px;
+        border-top: 2px solid #65706b;
+        padding-top: 22px;
+        color: var(--paper-muted);
+        font-size: 20px !important;
+      }
+
+      .caption {
+        left: 50%;
+        bottom: 82px;
+        transform: translateX(-50%);
+        z-index: 80;
+        min-width: 660px;
+        max-width: 1320px;
+        padding: 17px 28px 19px;
+        border: 2px solid var(--mint);
+        background: rgba(7, 16, 13, 0.96);
+        color: var(--paper);
+        text-align: center;
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 1.12;
+        box-shadow: 9px 9px 0 rgba(158, 255, 184, 0.55);
+      }
+
+      .source-note {
+        position: absolute;
+        right: 92px;
+        bottom: 158px;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 16px;
+        opacity: 0.72;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="168"
+      data-width="1920"
+      data-height="1080"
+    >
+      <section id="scene1" class="scene dark clip" data-start="0" data-duration="12.36" data-track-index="1">
+        <div class="top-rail">
+          <span>AccessPatch EU</span>
+          <div class="rail-meta"><span><i class="dot"></i>Build Week 2026</span><span>Developer Tools</span></div>
+        </div>
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow mint">Evidence before confidence</div>
+            <h1>A checkout can look finished—and still block the journey.</h1>
+            <p class="lede">Scan. Approve. Patch. Verify. One keyboard journey, backed by reproducible evidence.</p>
+          </div>
+          <div class="signal-column">
+            <div class="signal-card">SCAN <span>01</span></div>
+            <div class="signal-card">APPROVE <span>02</span></div>
+            <div class="signal-card">PATCH <span>03</span></div>
+            <div class="signal-card active">VERIFY <span>04</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene2" class="scene clip" data-start="11.64" data-duration="22.72" data-track-index="2">
+        <div class="top-rail">
+          <span>01 / Keyboard failure</span>
+          <div class="rail-meta"><span>localhost fixture</span><span class="coral">blocked</span></div>
+        </div>
+        <div class="screen-layout">
+          <div class="browser-frame">
+            <div class="browser-bar"><i></i><i></i><i></i></div>
+            <img src="assets/checkout-blocked.png" alt="" />
+          </div>
+          <div class="keyboard-panel">
+            <div class="eyebrow">Keyboard trace</div>
+            <h2>Focus cannot escape.</h2>
+            <div id="tab-key" class="key">TAB</div>
+            <div class="blocked-count">5×</div>
+            <div class="blocked-label">same target<br /><span class="mono">input#email</span></div>
+          </div>
+        </div>
+        <div class="source-note">Synthetic product and identity · no payment data</div>
+      </section>
+
+      <section id="scene3" class="scene clip" data-start="33.48" data-duration="16" data-track-index="3">
+        <div class="top-rail">
+          <span>02 / Evidence capture</span>
+          <div class="rail-meta"><span>Playwright</span><span>axe-core</span></div>
+        </div>
+        <div class="evidence-header">
+          <div>
+            <div class="eyebrow">Atomic evidence pack</div>
+            <h2>Replay the failure. Keep the proof.</h2>
+          </div>
+          <div class="counter">3 stable blockers</div>
+        </div>
+        <div class="image-stage">
+          <img src="assets/accesspatch-awaiting-approval.png" alt="" />
+          <div id="scan-line" class="scan-line"></div>
+          <div class="scan-badge">capturing · DOM · ARIA · keyboard · screenshot</div>
+        </div>
+      </section>
+
+      <section id="scene4" class="scene dark clip" data-start="49.48" data-duration="18.88" data-track-index="4">
+        <div class="top-rail">
+          <span>03 / Stable IDs</span>
+          <div class="rail-meta"><span>runtime → source</span></div>
+        </div>
+        <div class="id-layout">
+          <div>
+            <div class="eyebrow mint">Evidence-linked findings</div>
+            <div class="finding-list">
+              <div class="finding-row">
+                <div class="finding-id">AP-EU-001</div>
+                <div class="finding-text">Payment action has no accessible name.</div>
+              </div>
+              <div class="finding-row">
+                <div class="finding-id">AP-EU-002</div>
+                <div class="finding-text">Tab is intercepted and focus repeats.</div>
+              </div>
+              <div class="finding-row">
+                <div class="finding-id">AP-EU-003</div>
+                <div class="finding-text">Validation appears visually but is not announced.</div>
+              </div>
+            </div>
+          </div>
+          <div class="privacy-card">
+            <strong>Bounded by design.</strong>
+            <p>Localhost only. Synthetic inputs. External requests blocked. Form values scrubbed before evidence is stored.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene5" class="scene dark clip" data-start="67.64" data-duration="23.72" data-track-index="5">
+        <div class="top-rail">
+          <span>04 / Codex-assisted correlation</span>
+          <div class="rail-meta"><span class="mint">GPT-5.6</span><span>real artifacts</span></div>
+        </div>
+        <div class="correlation-layout">
+          <div class="model-card">
+            <div class="model-name">Signed-in Codex workflow</div>
+            <h2>Smallest evidence-backed change.</h2>
+            <p>Runtime behavior is correlated with the responsible React markers. The model proposes; deterministic gates decide.</p>
+          </div>
+          <div class="code-board">
+            <div class="proposal">
+              <div class="proposal-id mono">AP-EU-001 · CheckoutDialog.tsx</div>
+              <p>Add an explicit accessible name to the payment action.</p>
+            </div>
+            <div class="proposal">
+              <div class="proposal-id mono">AP-EU-002 · CheckoutDialog.tsx</div>
+              <p>Remove Tab interception and preserve the browser focus sequence.</p>
+            </div>
+            <div class="proposal">
+              <div class="proposal-id mono">AP-EU-003 · CheckoutDialog.tsx</div>
+              <p>Announce validation and focus the invalid field.</p>
+            </div>
+            <div class="test-decision">PASS authority: scanner + tests + allowlist</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene6" class="scene clip" data-start="90.64" data-duration="17.72" data-track-index="6">
+        <div class="top-rail">
+          <span>05 / Explicit approval</span>
+          <div class="rail-meta"><span class="coral">no edit before approval</span></div>
+        </div>
+        <div class="approval-layout">
+          <div class="image-stage">
+            <img src="assets/approval-gate.png" alt="" />
+          </div>
+          <div class="gate">
+            <div class="eyebrow">State gate</div>
+            <div class="gate-state locked">awaiting_approval</div>
+            <div class="gate-arrow">↓</div>
+            <div class="gate-state approved">human approved</div>
+            <div class="gate-arrow">↓</div>
+            <div class="gate-state">patching</div>
+            <p class="blocked-label">Editable root<br /><span class="mono">src/checkout/**</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene7" class="scene dark clip" data-start="107.48" data-duration="21.04" data-track-index="7">
+        <div class="top-rail">
+          <span>06 / Constrained patch + replay</span>
+          <div class="rail-meta"><span class="mint">allowlist: pass</span></div>
+        </div>
+        <div class="diff-layout">
+          <div class="diff-board">
+            <div class="file mono">src/checkout/CheckoutDialog.tsx</div>
+            <div class="diff-line minus">- aria-label=""</div>
+            <div class="diff-line plus">+ aria-label="Pay securely"</div>
+            <div class="diff-line minus">- onKeyDown={trapTabOnEmail}</div>
+            <div class="diff-line plus">+ onKeyDown={handleDialogKeys}</div>
+            <div class="diff-line minus">- &lt;p className="error"&gt;</div>
+            <div class="diff-line plus">+ &lt;p role="alert" aria-live="assertive"&gt;</div>
+            <div class="diff-line plus">+ emailRef.current?.focus()</div>
+          </div>
+          <div>
+            <div class="eyebrow mint">Original keyboard journey</div>
+            <div class="journey">
+              <div class="journey-step"><span class="index">01</span><span>Open secure checkout</span><span class="pass">PASS</span></div>
+              <div class="journey-step"><span class="index">02</span><span>Tab through controls</span><span class="pass">PASS</span></div>
+              <div class="journey-step"><span class="index">03</span><span>Hear validation</span><span class="pass">PASS</span></div>
+              <div class="journey-step"><span class="index">04</span><span>Submit valid order</span><span class="pass">PASS</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="verify-sweep" class="sweep" data-layout-allow-overflow></div>
+      </section>
+
+      <section id="scene8" class="scene clip" data-start="127.48" data-duration="18.88" data-track-index="8">
+        <div class="top-rail">
+          <span>07 / Verification receipt</span>
+          <div class="rail-meta"><span>before → after</span><span class="mint-dark">verified</span></div>
+        </div>
+        <div class="receipt-layout">
+          <div class="image-stage">
+            <img src="assets/accesspatch-verified.png" alt="" />
+          </div>
+          <div class="receipt-stats">
+            <div class="stat"><strong>3 / 3</strong><span>known critical fixture blockers resolved</span></div>
+            <div class="stat"><strong>0</strong><span>new critical axe findings</span></div>
+            <div class="stat"><strong>PASS</strong><span>scripted keyboard checkout</span></div>
+            <div class="stat"><strong>1 root</strong><span>diff inside approved scope</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene9" class="scene dark clip" data-start="145.64" data-duration="22.36" data-track-index="9">
+        <div class="top-rail">
+          <span>AccessPatch EU</span>
+          <div class="rail-meta"><span>OpenAI Build Week</span><span class="mint">ready to judge</span></div>
+        </div>
+        <div class="final-layout">
+          <div>
+            <div class="eyebrow mint">Built with Codex + GPT-5.6</div>
+            <h2>From blocker to verified repair.</h2>
+            <div class="contribution-list">
+              <div class="contribution">architecture</div>
+              <div class="contribution">scanner</div>
+              <div class="contribution">guarded workflow</div>
+              <div class="contribution">tests</div>
+              <div class="contribution">dashboard</div>
+              <div class="contribution">Codex plugin</div>
+            </div>
+          </div>
+          <div class="final-proof">
+            <div class="big">No Platform API key required.</div>
+            <p>The primary workflow runs through the signed-in Codex client.</p>
+            <p class="disclaimer">Technical remediation evidence—not legal advice, certification, or a guarantee of EAA/WCAG compliance. AI-proposed patches require human review.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <script>
+      const narration = `A checkout can look finished and still stop a keyboard user cold. AccessPatch EU turns that failure into an evidence-backed patch, then proves the same journey works.
+
+Here is the synthetic Lattice Supply checkout. I start secure checkout using only the keyboard. The email receives focus, but every Tab is intercepted and returned to it. Five presses later, focus has not moved. The payment control is unnamed, and the visible validation error is silent to assistive technology.
+
+AccessPatch reruns that exact journey with Playwright and axe-core. It records the keyboard trace, DOM and accessibility evidence, a screenshot, and source hints. The baseline ends with three stable blocker IDs, not a vague checklist.
+
+The evidence view connects each runtime failure to a source marker: A P E U zero zero one for the unnamed control, zero zero two for repeated focus, and zero zero three for the unannounced error. This is a bounded, synthetic localhost target; no customer or payment data leaves the machine.
+
+Inside the signed-in Codex workflow, GPT-5.6 reads those artifacts and correlates behavior with the responsible React source. It proposes the smallest behavioral changes: add an accessible name, remove the Tab trap, and announce validation while returning focus to the invalid field. Deterministic tests, not the model, decide whether the repair passes.
+
+Crucially, nothing is edited yet. AccessPatch shows the candidate files, intended behavior, and editable root. A human must explicitly approve. Only then may Codex patch source slash checkout, and an allowlist rejects any diff outside that boundary.
+
+After approval, the constrained diff changes only the evidence-backed behavior. AccessPatch scans again and replays the original keyboard journey. This time Tab advances through the dialog, the payment action has a useful name, invalid input is announced, and a valid keyboard submission reaches order confirmation.
+
+The verification receipt compares before and after: all three known critical fixture blockers were resolved, no new critical axe finding appeared, the scripted keyboard checkout completed, and the diff remained inside the editable root. Every claim links back to captured evidence and the approved source change.
+
+I built this during OpenAI Build Week with Codex and GPT-5.6: architecture, tests, scanner, guarded workflow, plugin, dashboard, and submission tooling. The primary workflow uses the signed-in Codex client, so it needs no OpenAI Platform API key. AccessPatch EU provides technical remediation evidence, not legal advice or accessibility certification.`;
+
+      const captionWords = narration.trim().split(/\s+/);
+      const captionGroups = [];
+      let wordIndex = 0;
+      while (wordIndex < captionWords.length) {
+        const remaining = captionWords.length - wordIndex;
+        let size = remaining <= 6 ? remaining : 5;
+        if (remaining > 6 && remaining - size < 3) size = 4;
+        captionGroups.push(captionWords.slice(wordIndex, wordIndex + size).join(" "));
+        wordIndex += size;
+      }
+
+      const captionStart = 0.35;
+      const captionEnd = 165.2;
+      const secondsPerWord = (captionEnd - captionStart) / captionWords.length;
+      let elapsedWords = 0;
+      for (let index = 0; index < captionGroups.length; index += 1) {
+        const text = captionGroups[index];
+        const groupWordCount = text.split(/\s+/).length;
+        const start = captionStart + elapsedWords * secondsPerWord;
+        const duration = Math.max(1.55, groupWordCount * secondsPerWord - 0.05);
+        const element = document.createElement("div");
+        element.id = `caption-${index}`;
+        element.className = "caption clip";
+        element.dataset.start = start.toFixed(3);
+        element.dataset.duration = duration.toFixed(3);
+        element.dataset.trackIndex = "30";
+        element.textContent = text;
+        document.getElementById("root").appendChild(element);
+        elapsedWords += groupWordCount;
+      }
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#scene1 .eyebrow", { opacity: 0, y: 24, duration: 0.45, ease: "power2.out" }, 0.15);
+      tl.from("#scene1 h1", { opacity: 0, y: 46, duration: 0.75, ease: "power3.out" }, 0.35);
+      tl.from("#scene1 .lede", { opacity: 0, y: 26, duration: 0.55, ease: "power2.out" }, 0.72);
+      tl.from("#scene1 .signal-card", { opacity: 0, x: 42, duration: 0.42, stagger: 0.12, ease: "power2.out" }, 0.55);
+
+      tl.from("#scene2", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 11.64);
+      tl.from("#scene2 .browser-frame", { opacity: 0, y: 42, duration: 0.55, ease: "power2.out" }, 12.15);
+      tl.from("#scene2 .keyboard-panel", { opacity: 0, x: 36, duration: 0.5, ease: "power2.out" }, 12.4);
+      tl.fromTo("#tab-key", { scale: 1 }, { scale: 0.9, duration: 0.18, repeat: 9, yoyo: true, ease: "power1.inOut" }, 18.3);
+
+      tl.from("#scene3", { x: 1920, duration: 0.52, ease: "power3.inOut" }, 33.48);
+      tl.from("#scene3 .evidence-header", { opacity: 0, y: 28, duration: 0.46, ease: "power2.out" }, 34.05);
+      tl.from("#scene3 .image-stage", { opacity: 0, y: 32, duration: 0.55, ease: "power2.out" }, 34.28);
+      tl.fromTo("#scan-line", { y: 0 }, { y: 710, duration: 3.2, ease: "power1.inOut" }, 35.1);
+
+      tl.from("#scene4", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 49.48);
+      tl.from("#scene4 .finding-row", { opacity: 0, x: -42, duration: 0.46, stagger: 0.2, ease: "power2.out" }, 50.08);
+      tl.from("#scene4 .privacy-card", { opacity: 0, x: 44, duration: 0.58, ease: "power2.out" }, 50.55);
+
+      tl.from("#scene5", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 67.64);
+      tl.from("#scene5 .model-card", { opacity: 0, x: -42, duration: 0.55, ease: "power2.out" }, 68.15);
+      tl.from("#scene5 .code-board", { opacity: 0, y: 42, duration: 0.6, ease: "power2.out" }, 68.38);
+      tl.from("#scene5 .proposal", { opacity: 0, x: 28, duration: 0.4, stagger: 0.22, ease: "power2.out" }, 69.05);
+
+      tl.from("#scene6", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 90.64);
+      tl.from("#scene6 .image-stage", { opacity: 0, y: 36, duration: 0.55, ease: "power2.out" }, 91.16);
+      tl.from("#scene6 .gate-state", { opacity: 0, x: 36, duration: 0.42, stagger: 0.28, ease: "power2.out" }, 91.55);
+      tl.from("#scene6 .gate-arrow", { opacity: 0, y: -12, duration: 0.32, stagger: 0.28, ease: "power2.out" }, 91.84);
+
+      tl.from("#scene7", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 107.48);
+      tl.from("#scene7 .diff-board", { opacity: 0, x: -40, duration: 0.55, ease: "power2.out" }, 108.02);
+      tl.from("#scene7 .journey-step", { opacity: 0, x: 36, duration: 0.38, stagger: 0.22, ease: "power2.out" }, 108.45);
+      tl.fromTo("#verify-sweep", { xPercent: -105 }, { xPercent: 105, duration: 0.52, ease: "power2.inOut" }, 115.8);
+
+      tl.from("#scene8", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 127.48);
+      tl.from("#scene8 .image-stage", { opacity: 0, y: 35, duration: 0.55, ease: "power2.out" }, 128.02);
+      tl.from("#scene8 .stat", { opacity: 0, x: 34, duration: 0.42, stagger: 0.22, ease: "power2.out" }, 128.35);
+
+      tl.from("#scene9", { backgroundColor: "#9effb8", color: "#07100d", duration: 0.44, ease: "power2.inOut" }, 145.64);
+      tl.from("#scene9 h2", { opacity: 0, y: 42, duration: 0.58, ease: "power2.out" }, 146.18);
+      tl.from("#scene9 .contribution", { opacity: 0, y: 22, duration: 0.34, stagger: 0.11, ease: "power2.out" }, 146.55);
+      tl.from("#scene9 .final-proof", { opacity: 0, x: 46, duration: 0.62, ease: "power2.out" }, 147.05);
+
+      document.querySelectorAll(".caption").forEach((caption) => {
+        tl.from(caption, { opacity: 0, y: 18, duration: 0.16, ease: "power1.out" }, Number(caption.dataset.start));
+      });
+      window.__timelines.main = tl;
+    </script>
+  </body>
+</html>

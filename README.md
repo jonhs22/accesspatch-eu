@@ -117,7 +117,8 @@ The full safety contract is in
 | `npm run preview` | Preview the production build locally. |
 | `npm run typecheck` | Run strict TypeScript checking without emitting files. |
 | `npm test` | Run the Vitest unit suite. |
-| `npm run test:e2e` | Run the serial Playwright end-to-end suite. |
+| `npm run test:e2e` | Run the serial non-media Playwright end-to-end suite. |
+| `npm run test:media` | Validate the local final MP4, captions, transcript, screenshots, and thumbnail. |
 | `npm run accesspatch -- scan --phase before` | Start an interactive evidence run. |
 | `npm run accesspatch -- scan --phase after` | Capture post-patch evidence. |
 | `npm run accesspatch -- verify` | Produce a deterministic verification receipt. |

@@ -1,44 +1,311 @@
 1
-00:00:00,000 --> 00:00:12,000
-A checkout can look finished and still stop a keyboard user cold.
-AccessPatch EU turns that failure into an evidence-backed patch.
+00:00:00,000 --> 00:00:02,408
+A checkout can look finished
 
 2
-00:00:12,000 --> 00:00:34,000
-Five Tab presses return focus to Email. The payment control is unnamed,
-and the visible validation error is silent to assistive technology.
+00:00:02,458 --> 00:00:04,516
+and still stop a keyboard
 
 3
-00:00:34,000 --> 00:00:50,000
-Playwright and axe-core capture a privacy-scrubbed keyboard trace,
-DOM, accessibility evidence, screenshot, and source hints.
+00:00:04,566 --> 00:00:06,624
+user cold. AccessPatch EU turns
 
 4
-00:00:50,000 --> 00:01:08,000
-Three stable findings connect runtime behavior to source:
-AP-EU-001, AP-EU-002, and AP-EU-003.
+00:00:06,674 --> 00:00:08,732
+that failure into an evidence-backed
 
 5
-00:01:08,000 --> 00:01:31,000
-GPT-5.6 correlates bounded browser evidence with React source
-and proposes the smallest repair. Deterministic tests decide pass/fail.
+00:00:08,782 --> 00:00:10,840
+patch, then proves the same
 
 6
-00:01:31,000 --> 00:01:48,000
-Nothing is edited yet. A human must explicitly approve,
-and the editable root remains src/checkout.
+00:00:10,890 --> 00:00:12,948
+journey works. Here is the
 
 7
-00:01:48,000 --> 00:02:08,000
-The approved diff changes only the evidence-backed behavior,
-then AccessPatch scans again and replays the same keyboard journey.
+00:00:12,998 --> 00:00:15,056
+synthetic Lattice Supply checkout. I
 
 8
-00:02:08,000 --> 00:02:26,000
-The known blockers resolve, no new critical axe finding appears,
-and keyboard checkout reaches order confirmation.
+00:00:15,106 --> 00:00:17,164
+start secure checkout using only
 
 9
-00:02:26,000 --> 00:02:48,000
-Built with Codex and GPT-5.6. The signed-in local workflow needs no
-OpenAI Platform API key and provides evidence, not certification.
+00:00:17,214 --> 00:00:19,273
+the keyboard. The email receives
+
+10
+00:00:19,323 --> 00:00:21,381
+focus, but every Tab is
+
+11
+00:00:21,431 --> 00:00:23,489
+intercepted and returned to it.
+
+12
+00:00:23,539 --> 00:00:25,597
+Five presses later, focus has
+
+13
+00:00:25,647 --> 00:00:27,705
+not moved. The payment control
+
+14
+00:00:27,755 --> 00:00:29,813
+is unnamed, and the visible
+
+15
+00:00:29,863 --> 00:00:31,921
+validation error is silent to
+
+16
+00:00:31,971 --> 00:00:34,029
+assistive technology. AccessPatch reruns that
+
+17
+00:00:34,079 --> 00:00:36,137
+exact journey with Playwright and
+
+18
+00:00:36,187 --> 00:00:38,245
+axe-core. It records the keyboard
+
+19
+00:00:38,295 --> 00:00:40,353
+trace, DOM and accessibility evidence,
+
+20
+00:00:40,403 --> 00:00:42,461
+a screenshot, and source hints.
+
+21
+00:00:42,511 --> 00:00:44,569
+The baseline ends with three
+
+22
+00:00:44,619 --> 00:00:46,677
+stable blocker IDs, not a
+
+23
+00:00:46,727 --> 00:00:48,785
+vague checklist. The evidence view
+
+24
+00:00:48,835 --> 00:00:50,893
+connects each runtime failure to
+
+25
+00:00:50,943 --> 00:00:53,001
+a source marker: A P
+
+26
+00:00:53,051 --> 00:00:55,109
+E U zero zero one
+
+27
+00:00:55,159 --> 00:00:57,218
+for the unnamed control, zero
+
+28
+00:00:57,268 --> 00:00:59,326
+zero two for repeated focus,
+
+29
+00:00:59,376 --> 00:01:01,434
+and zero zero three for
+
+30
+00:01:01,484 --> 00:01:03,542
+the unannounced error. This is
+
+31
+00:01:03,592 --> 00:01:05,650
+a bounded, synthetic localhost target;
+
+32
+00:01:05,700 --> 00:01:07,758
+no customer or payment data
+
+33
+00:01:07,808 --> 00:01:09,866
+leaves the machine. Inside the
+
+34
+00:01:09,916 --> 00:01:11,974
+signed-in Codex workflow, GPT-5.6 reads
+
+35
+00:01:12,024 --> 00:01:14,082
+those artifacts and correlates behavior
+
+36
+00:01:14,132 --> 00:01:16,190
+with the responsible React source.
+
+37
+00:01:16,240 --> 00:01:18,298
+It proposes the smallest behavioral
+
+38
+00:01:18,348 --> 00:01:20,406
+changes: add an accessible name,
+
+39
+00:01:20,456 --> 00:01:22,514
+remove the Tab trap, and
+
+40
+00:01:22,564 --> 00:01:24,622
+announce validation while returning focus
+
+41
+00:01:24,672 --> 00:01:26,730
+to the invalid field. Deterministic
+
+42
+00:01:26,780 --> 00:01:28,838
+tests, not the model, decide
+
+43
+00:01:28,888 --> 00:01:30,946
+whether the repair passes. Crucially,
+
+44
+00:01:30,996 --> 00:01:33,054
+nothing is edited yet. AccessPatch
+
+45
+00:01:33,104 --> 00:01:35,163
+shows the candidate files, intended
+
+46
+00:01:35,213 --> 00:01:37,271
+behavior, and editable root. A
+
+47
+00:01:37,321 --> 00:01:39,379
+human must explicitly approve. Only
+
+48
+00:01:39,429 --> 00:01:41,487
+then may Codex patch source
+
+49
+00:01:41,537 --> 00:01:43,595
+slash checkout, and an allowlist
+
+50
+00:01:43,645 --> 00:01:45,703
+rejects any diff outside that
+
+51
+00:01:45,753 --> 00:01:47,811
+boundary. After approval, the constrained
+
+52
+00:01:47,861 --> 00:01:49,919
+diff changes only the evidence-backed
+
+53
+00:01:49,969 --> 00:01:52,027
+behavior. AccessPatch scans again and
+
+54
+00:01:52,077 --> 00:01:54,135
+replays the original keyboard journey.
+
+55
+00:01:54,185 --> 00:01:56,243
+This time Tab advances through
+
+56
+00:01:56,293 --> 00:01:58,351
+the dialog, the payment action
+
+57
+00:01:58,401 --> 00:02:00,459
+has a useful name, invalid
+
+58
+00:02:00,509 --> 00:02:02,567
+input is announced, and a
+
+59
+00:02:02,617 --> 00:02:04,675
+valid keyboard submission reaches order
+
+60
+00:02:04,725 --> 00:02:06,783
+confirmation. The verification receipt compares
+
+61
+00:02:06,833 --> 00:02:08,891
+before and after: all three
+
+62
+00:02:08,941 --> 00:02:10,999
+known critical fixture blockers were
+
+63
+00:02:11,049 --> 00:02:13,108
+resolved, no new critical axe
+
+64
+00:02:13,158 --> 00:02:15,216
+finding appeared, the scripted keyboard
+
+65
+00:02:15,266 --> 00:02:17,324
+checkout completed, and the diff
+
+66
+00:02:17,374 --> 00:02:19,432
+remained inside the editable root.
+
+67
+00:02:19,482 --> 00:02:21,540
+Every claim links back to
+
+68
+00:02:21,590 --> 00:02:23,648
+captured evidence and the approved
+
+69
+00:02:23,698 --> 00:02:25,756
+source change. I built this
+
+70
+00:02:25,806 --> 00:02:27,864
+during OpenAI Build Week with
+
+71
+00:02:27,914 --> 00:02:29,972
+Codex and GPT-5.6: architecture, tests,
+
+72
+00:02:30,022 --> 00:02:32,080
+scanner, guarded workflow, plugin, dashboard,
+
+73
+00:02:32,130 --> 00:02:34,188
+and submission tooling. The primary
+
+74
+00:02:34,238 --> 00:02:36,296
+workflow uses the signed-in Codex
+
+75
+00:02:36,346 --> 00:02:38,404
+client, so it needs no
+
+76
+00:02:38,454 --> 00:02:40,512
+OpenAI Platform API key. AccessPatch
+
+77
+00:02:40,562 --> 00:02:42,620
+EU provides technical remediation evidence,
+
+78
+00:02:42,670 --> 00:02:45,150
+not legal advice or accessibility certification.

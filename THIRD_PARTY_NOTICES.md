@@ -46,5 +46,17 @@ code-native React, HTML, CSS, and original inline SVG rather than third-party
 logos. No downloaded stock photography, music, video, logo, animation, or
 sound effect is included.
 
+The English demo narration was synthesized locally from the checked-in
+`video/narration.txt` script with the `af_nova` voice distributed for
+[Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), whose model card
+licenses the model weights under Apache-2.0. HyperFrames invoked the local
+[kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) runtime, distributed
+under the MIT License. The composition and render commands pin
+[HyperFrames 0.7.64](https://www.npmjs.com/package/hyperframes/v/0.7.64),
+distributed under Apache-2.0. The narration is synthetic and does not
+impersonate or identify a real person. It was loudness-normalized locally with
+FFmpeg; no music or sound-effect track is used. These production tools are not
+bundled as application runtime dependencies.
+
 Asset creators, dimensions, modifications, status, and SHA-256 digests are
 recorded in `assets/ASSET_LEDGER.md`.

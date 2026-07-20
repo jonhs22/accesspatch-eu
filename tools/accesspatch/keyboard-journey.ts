@@ -41,6 +41,7 @@ export interface KeyboardJourneyResult {
     email: string;
     error: string;
   };
+  redactionTokens: string[];
 }
 
 async function activeFocusTarget(page: Page): Promise<FocusTarget> {
@@ -69,6 +70,13 @@ export async function runKeyboardJourney(
   await start.focus();
   await page.keyboard.press("Enter");
   await page.getByRole("dialog", { name: "Complete your order" }).waitFor();
+  const redactionTokens = await page
+    .locator("input, textarea, select")
+    .evaluateAll((controls) =>
+      controls
+        .map((control) => (control as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value)
+        .filter((value) => value.length > 0),
+    );
   steps.push({ index: 0, key: "Enter", target: await activeFocusTarget(page) });
 
   const repeatedFocusTargets: string[] = [];
@@ -102,6 +110,7 @@ export async function runKeyboardJourney(
   // valid value alone cannot create a false successful journey.
   await page.keyboard.press("Control+A");
   await page.keyboard.type("maya.chen@example.test");
+  redactionTokens.push("maya.chen@example.test");
   await page.keyboard.press("Tab");
   const paymentTarget = await activeFocusTarget(page);
   steps.push({ index: steps.length, key: "Tab", target: paymentTarget });
@@ -150,5 +159,6 @@ export async function runKeyboardJourney(
       email: emailHtml,
       error: errorHtml,
     },
+    redactionTokens: [...new Set(redactionTokens)].sort(),
   };
 }

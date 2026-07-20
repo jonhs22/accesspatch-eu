@@ -5,10 +5,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   collectSubmissionIssues,
   findSensitiveTextIssues,
-  runSubmissionCheck,
   validateVideoProbe,
 } from "../../tools/accesspatch/submission-check.js";
-import { PROJECT_ROOT } from "../../tools/accesspatch/paths.js";
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -62,18 +60,11 @@ describe("submission validation", () => {
     ).toEqual([]);
   });
 
-  it("treats absent external URLs and an in-progress final video as explicit handoffs", async () => {
-    const issues = await collectSubmissionIssues(PROJECT_ROOT);
-    expect(issues).not.toContain(
+  it("fails closed when the final video is absent", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "accesspatch-submit-"));
+    roots.push(root);
+    expect(await collectSubmissionIssues(root)).toContain(
       "Missing required artifact: submission/accesspatch-eu-demo.mp4",
     );
-    const receipt = await runSubmissionCheck(PROJECT_ROOT);
-    expect(receipt).toMatchObject({
-      outcome: "passed",
-      externalHandoffs: expect.arrayContaining([
-        expect.stringMatching(/YouTube/i),
-        expect.stringMatching(/Devpost/i),
-      ]),
-    });
   });
 });

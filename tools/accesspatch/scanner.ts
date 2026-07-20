@@ -24,6 +24,7 @@ import {
 import { RunStore, type RunStoreExpectation } from "./run-store.js";
 import {
   captureSanitizedDom,
+  sanitizeTraceArchive,
   scrubPageFormData,
 } from "./scanner-artifacts.js";
 import { withBrowserContext } from "./scanner-lifecycle.js";
@@ -206,6 +207,7 @@ async function captureEvidence(
         );
         await context.tracing.stop({ path: absolutePaths.trace });
         traceStarted = false;
+        await sanitizeTraceArchive(absolutePaths.trace, journey.redactionTokens);
 
         if (blockedExternalRequests.length > 0) {
           throw new Error(formatBlockedRequestFailure(blockedExternalRequests));

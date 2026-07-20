@@ -18,9 +18,8 @@
 
 - [x] Reproducible narration, scenes, caption, render, and verification scripts
   are present.
-- [ ] External account handoff: confirm the rendered
-  `submission/accesspatch-eu-demo.mp4` passes `scripts/verify-video.ps1` after
-  the active local render finishes.
+- [x] `submission/accesspatch-eu-demo.mp4` passes
+  `scripts/verify-video.ps1` and the explicit media contract.
 
 ## External account handoff
 
@@ -30,5 +29,5 @@
   session identifier into the required submission field.
 - [ ] Review the final Devpost preview and perform the submit action.
 
-Unchecked items require the submitter's active render or authenticated external
-account. They are deliberately not reported as completed local automation.
+Unchecked items require the submitter's authenticated external account. They
+are deliberately not reported as completed local automation.

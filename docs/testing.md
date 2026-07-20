@@ -49,6 +49,7 @@ AccessPatch verification: PASS
 The local submission package can be checked separately:
 
 ```bash
+npm run test:media
 npm run submission:check
 ```
 
@@ -62,7 +63,8 @@ does not excuse a missing or invalid local artifact.
 | `node scripts/secret-scan.mjs` | Text files do not contain supported secret-like credential patterns. |
 | `npm run typecheck` | Strict TypeScript contracts across `src`, `tools`, tests, and build/test configuration. |
 | `npm test` | Vitest unit tests under `tests/unit/**/*.test.ts`. |
-| `npm run test:e2e` | Playwright tests under `tests/e2e` against the local Vite server. |
+| `npm run test:e2e` | Non-media Playwright tests under `tests/e2e` against the local Vite server. |
+| `npm run test:media` | Local MP4 stream metadata, duration, size, screenshots, thumbnail, captions, transcript, and privacy metadata. |
 | `npm run build` | The React application produces a Vite production build. |
 | `npm run demo:verify` | The complete deterministic fixture state machine passes and restores source bytes. |
 | `npm run submission:check` | Required documents/media metadata, asset coverage, unfinished copy, and secret-like text. |

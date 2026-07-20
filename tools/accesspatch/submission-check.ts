@@ -321,6 +321,10 @@ export async function collectSubmissionIssues(
   const videoPath = path.join(root, "submission", "accesspatch-eu-demo.mp4");
   if (await exists(videoPath)) {
     try {
+      const videoStat = await stat(videoPath);
+      if (videoStat.size >= 95_000_000) {
+        issues.push("Final video must remain under 95 MB for portable delivery.");
+      }
       const probe = await (options.probeVideo ?? probeVideo)(videoPath);
       issues.push(...validateVideoProbe(probe as VideoProbe));
     } catch (error) {
@@ -328,6 +332,8 @@ export async function collectSubmissionIssues(
         `Final video ffprobe failed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  } else {
+    issues.push("Missing required artifact: submission/accesspatch-eu-demo.mp4");
   }
   return [...new Set(issues)].sort();
 }
@@ -336,7 +342,7 @@ export async function runSubmissionCheck(projectRoot = PROJECT_ROOT): Promise<{
   outcome: "passed";
   checkedAt: string;
   externalHandoffs: string[];
-  mediaStatus: "validated" | "rendering_handoff";
+  mediaStatus: "validated";
 }> {
   const issues = await collectSubmissionIssues(projectRoot);
   if (issues.length > 0) {
@@ -351,6 +357,6 @@ export async function runSubmissionCheck(projectRoot = PROJECT_ROOT): Promise<{
       "Devpost final submission requires the submitter's external account.",
       "Codex /feedback session retrieval remains an explicit account handoff.",
     ],
-    mediaStatus: (await exists(videoPath)) ? "validated" : "rendering_handoff",
+    mediaStatus: "validated",
   };
 }

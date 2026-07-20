@@ -10,6 +10,15 @@ public/runs/.current.lock
 public/runs/.fixture-reset.lock
 video/raw/
 video/work/
+video/accesspatch-demo/assets/narration.wav
+video/accesspatch-demo/assets/narration-raw.wav
+video/accesspatch-demo/assets/narration-fast.wav
+video/accesspatch-demo/assets/narration-normalized.wav
+submission/accesspatch-frames/
+submission/.accesspatch-frames*
+submission/accesspatch-eu-demo-draft.*
+submission/accesspatch-eu-demo-render.*
+submission/accesspatch-eu-demo.mp4
 *.log
 npm-debug.log*
 yarn-debug.log*

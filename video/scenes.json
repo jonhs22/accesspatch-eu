@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "durationSeconds": 168,
+  "resolution": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "identity": {
+    "source": "../DESIGN.md",
+    "fonts": ["Segoe UI", "Cascadia Mono"],
+    "palette": ["#07100d", "#111815", "#f5f4ee", "#9effb8", "#ff6b5f"]
+  },
+  "privacy": {
+    "accountChrome": false,
+    "thirdPartyLogos": false,
+    "realCustomerData": false,
+    "externalNetworkRequests": false
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "start": 0,
+      "end": 12,
+      "title": "A finished-looking checkout can still block a keyboard user",
+      "source": "original motion graphics"
+    },
+    {
+      "id": "keyboard-failure",
+      "start": 12,
+      "end": 34,
+      "title": "Five Tab presses return focus to the same email input",
+      "source": "../assets/design/concepts/checkout-blocked.png",
+      "synthetic": true
+    },
+    {
+      "id": "evidence-capture",
+      "start": 34,
+      "end": 50,
+      "title": "Playwright and axe-core capture the bounded evidence pack",
+      "source": "../public/runs/runtime/<runId>/before/"
+    },
+    {
+      "id": "stable-findings",
+      "start": 50,
+      "end": 68,
+      "title": "Three stable findings connect runtime behavior to source markers",
+      "source": "../tools/accesspatch/scanner.ts"
+    },
+    {
+      "id": "codex-correlation",
+      "start": 68,
+      "end": 91,
+      "title": "Codex with GPT-5.6 proposes the smallest evidence-backed changes",
+      "source": "../tools/accesspatch/proposals.ts",
+      "modelOutputRepresentedAsAccountChrome": false
+    },
+    {
+      "id": "human-approval",
+      "start": 91,
+      "end": 108,
+      "title": "No source edit is allowed before explicit human approval",
+      "source": "../tools/accesspatch/approval.ts"
+    },
+    {
+      "id": "patch-and-replay",
+      "start": 108,
+      "end": 128,
+      "title": "The approved diff stays inside src/checkout and the journey replays",
+      "source": "../tools/accesspatch/git-guard.ts"
+    },
+    {
+      "id": "verification-receipt",
+      "start": 128,
+      "end": 146,
+      "title": "Known blockers resolve, no new critical axe finding appears, and checkout completes",
+      "source": "../tools/accesspatch/verifier.ts"
+    },
+    {
+      "id": "build-week-close",
+      "start": 146,
+      "end": 168,
+      "title": "Built with Codex and GPT-5.6; signed-in flow needs no Platform API key",
+      "source": "../README.md",
+      "disclaimer": "Technical remediation evidence, not legal advice or accessibility certification."
+    }
+  ]
+}

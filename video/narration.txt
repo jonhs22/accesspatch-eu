@@ -1,0 +1,17 @@
+A checkout can look finished and still stop a keyboard user cold. AccessPatch EU turns that failure into an evidence-backed patch, then proves the same journey works.
+
+Here is the synthetic Lattice Supply checkout. I start secure checkout using only the keyboard. The email receives focus, but every Tab is intercepted and returned to it. Five presses later, focus has not moved. The payment control is unnamed, and the visible validation error is silent to assistive technology.
+
+AccessPatch reruns that exact journey with Playwright and axe-core. It records the keyboard trace, DOM and accessibility evidence, a screenshot, and source hints. The baseline ends with three stable blocker IDs, not a vague checklist.
+
+The evidence view connects each runtime failure to a source marker: A P E U zero zero one for the unnamed control, zero zero two for repeated focus, and zero zero three for the unannounced error. This is a bounded, synthetic localhost target; no customer or payment data leaves the machine.
+
+Inside the signed-in Codex workflow, GPT-5.6 reads those artifacts and correlates behavior with the responsible React source. It proposes the smallest behavioral changes: add an accessible name, remove the Tab trap, and announce validation while returning focus to the invalid field. Deterministic tests, not the model, decide whether the repair passes.
+
+Crucially, nothing is edited yet. AccessPatch shows the candidate files, intended behavior, and editable root. A human must explicitly approve. Only then may Codex patch source slash checkout, and an allowlist rejects any diff outside that boundary.
+
+After approval, the constrained diff changes only the evidence-backed behavior. AccessPatch scans again and replays the original keyboard journey. This time Tab advances through the dialog, the payment action has a useful name, invalid input is announced, and a valid keyboard submission reaches order confirmation.
+
+The verification receipt compares before and after: all three known critical fixture blockers were resolved, no new critical axe finding appeared, the scripted keyboard checkout completed, and the diff remained inside the editable root. Every claim links back to captured evidence and the approved source change.
+
+I built this during OpenAI Build Week with Codex and GPT-5.6: architecture, tests, scanner, guarded workflow, plugin, dashboard, and submission tooling. The primary workflow uses the signed-in Codex client, so it needs no OpenAI Platform API key. AccessPatch EU provides technical remediation evidence, not legal advice or accessibility certification.
