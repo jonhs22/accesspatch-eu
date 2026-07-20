@@ -1,0 +1,22 @@
+{
+  "name": "accesspatch-eu",
+  "version": "1.0.0",
+  "description": "Diagnose, approve, patch, and verify blocking accessibility defects.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AccessPatch EU",
+    "shortDescription": "Repair a blocked checkout with evidence and approval.",
+    "longDescription": "Run a localhost keyboard journey, inspect evidence, propose bounded repairs, require explicit human approval, patch only src/checkout, and verify the same journey.",
+    "developerName": "AccessPatch EU",
+    "category": "Developer Tools",
+    "capabilities": [
+      "accessibility-evidence",
+      "guarded-source-repair",
+      "deterministic-verification"
+    ],
+    "defaultPrompt": "Use $accesspatch-eu:accesspatch to diagnose and safely repair the synthetic checkout."
+  }
+}

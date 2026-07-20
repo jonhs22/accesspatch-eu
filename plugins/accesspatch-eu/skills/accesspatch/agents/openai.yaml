@@ -1,0 +1,4 @@
+interface:
+  display_name: "AccessPatch EU"
+  short_description: "Evidence-backed checkout accessibility repair"
+  default_prompt: "Run the guarded AccessPatch workflow, stop for explicit approval, and cite verification evidence."
