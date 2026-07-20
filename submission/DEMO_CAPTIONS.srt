@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:12,000
+A checkout can look finished and still stop a keyboard user cold.
+AccessPatch EU turns that failure into an evidence-backed patch.
+
+2
+00:00:12,000 --> 00:00:34,000
+Five Tab presses return focus to Email. The payment control is unnamed,
+and the visible validation error is silent to assistive technology.
+
+3
+00:00:34,000 --> 00:00:50,000
+Playwright and axe-core capture a privacy-scrubbed keyboard trace,
+DOM, accessibility evidence, screenshot, and source hints.
+
+4
+00:00:50,000 --> 00:01:08,000
+Three stable findings connect runtime behavior to source:
+AP-EU-001, AP-EU-002, and AP-EU-003.
+
+5
+00:01:08,000 --> 00:01:31,000
+GPT-5.6 correlates bounded browser evidence with React source
+and proposes the smallest repair. Deterministic tests decide pass/fail.
+
+6
+00:01:31,000 --> 00:01:48,000
+Nothing is edited yet. A human must explicitly approve,
+and the editable root remains src/checkout.
+
+7
+00:01:48,000 --> 00:02:08,000
+The approved diff changes only the evidence-backed behavior,
+then AccessPatch scans again and replays the same keyboard journey.
+
+8
+00:02:08,000 --> 00:02:26,000
+The known blockers resolve, no new critical axe finding appears,
+and keyboard checkout reaches order confirmation.
+
+9
+00:02:26,000 --> 00:02:48,000
+Built with Codex and GPT-5.6. The signed-in local workflow needs no
+OpenAI Platform API key and provides evidence, not certification.
