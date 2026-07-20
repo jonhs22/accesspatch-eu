@@ -4,8 +4,9 @@ import type { EvidenceSet, Finding } from "../../src/contracts/run.js";
 
 const id = "run-task-4"; const root = `public/runs/runtime/${id}`; const now = "2026-07-20T12:00:00.000Z";
 const ids = ["AP-EU-001", "AP-EU-002", "AP-EU-003"] as const;
+const journeyIds = ["checkout-completes", "focus-escapes-email", "validation-announced"] as const;
 function finding(findingId: (typeof ids)[number]): Finding { return { id: findingId, severity: findingId === "AP-EU-003" ? "serious" : "critical", rule: findingId, sourceMarker: `ACCESSPATCH-DEMO-${findingId.slice(-3)}`, userImpact: "Impact", route: "/checkout", journeyStep: "Checkout", selector: "button", htmlExcerpt: "<button />", wcagTags: ["wcag2a"], evidencePaths: [`${root}/after/${findingId}.json`], remediationConstraint: "Keep", verificationAssertion: "Works" }; }
-function evidence(phase: "before" | "after", findings: Finding[], complete: boolean, runId = id): EvidenceSet { const p = `public/runs/runtime/${runId}/${phase}`; return { runId, phase, url: "http://127.0.0.1:4173/checkout", capturedAt: now, screenshotPath: `${p}/s.png`, tracePath: `${p}/t.zip`, domPath: `${p}/d.html`, ariaSnapshotPath: `${p}/a.yml`, axeReportPath: `${p}/x.json`, keyboardTracePath: `${p}/k.json`, findings, journeyChecks: [{ id: "checkout-completes", label: "Checkout", passed: complete, evidencePath: `${p}/k.json` }] }; }
+function evidence(phase: "before" | "after", findings: Finding[], complete: boolean, runId = id, checks: readonly string[] = journeyIds): EvidenceSet { const p = `public/runs/runtime/${runId}/${phase}`; return { runId, phase, url: "http://127.0.0.1:4173/checkout", capturedAt: now, screenshotPath: `${p}/s.png`, tracePath: `${p}/t.zip`, domPath: `${p}/d.html`, ariaSnapshotPath: `${p}/a.yml`, axeReportPath: `${p}/x.json`, keyboardTracePath: `${p}/k.json`, findings, journeyChecks: checks.map((checkId) => ({ id: checkId, label: checkId, passed: complete, evidencePath: `${p}/k.json` })) }; }
 const before = evidence("before", ids.map(finding), false);
 const success = () => verify(before, evidence("after", [], true), { changedFiles: ["src/checkout/CheckoutPage.tsx"], approvedCandidateFiles: ["src/checkout/CheckoutPage.tsx"], diffPath: `${root}/verification/diff.patch` });
 
@@ -20,6 +21,21 @@ describe("verification receipt", () => {
   it("fails unresolved baseline findings", () => expect(verify(before, evidence("after", [finding("AP-EU-001")], true), { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toMatchObject({ outcome: "failed", remainingFindingIds: ["AP-EU-001"] }));
   it("fails a new serious or critical axe finding", () => { const baseline = evidence("before", [finding("AP-EU-001"), finding("AP-EU-002")], false); const newFinding = finding("AP-EU-003"); expect(verify(baseline, evidence("after", [newFinding], true), { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toMatchObject({ outcome: "failed", regressions: [newFinding] }); });
   it("fails an incomplete checkout journey", () => expect(verify(before, evidence("after", [], false), { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toMatchObject({ outcome: "failed", checkoutCompleted: false }));
+  it("fails when after evidence omits a frozen journey check", () => {
+    const after = evidence("after", [], true, id, ["checkout-completes"]);
+    expect(verify(before, after, { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toMatchObject({
+      outcome: "failed",
+      failureReasons: expect.arrayContaining([expect.stringMatching(/journey.*set/i)]),
+    });
+  });
+  it("fails when any required after journey check does not pass", () => {
+    const after = evidence("after", [], true);
+    after.journeyChecks[1] = { ...after.journeyChecks[1], passed: false };
+    expect(verify(before, after, { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toMatchObject({
+      outcome: "failed",
+      failureReasons: expect.arrayContaining([expect.stringMatching(/journey.*failed/i)]),
+    });
+  });
   it("rejects mismatched evidence run IDs", () => expect(() => verify(before, evidence("after", [], true, "other-run"), { changedFiles: [], approvedCandidateFiles: [], diffPath: `${root}/verification/diff.patch` })).toThrow(/run ID/i));
   it("fails out-of-scope changed files", () => expect(verify(before, evidence("after", [], true), { changedFiles: ["tests/unit/verifier.test.ts"], approvedCandidateFiles: ["src/checkout/CheckoutPage.tsx"], diffPath: `${root}/verification/diff.patch` })).toMatchObject({ outcome: "failed", diffWithinAllowlist: false }));
 });

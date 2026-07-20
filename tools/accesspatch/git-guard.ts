@@ -54,21 +54,44 @@ export function normalizeGitPath(candidate: string): string {
   return candidate;
 }
 
+function nulRecords(output: string, label: string): string[] {
+  if (output === "") return [];
+  if (!output.endsWith("\0")) {
+    throw new Error(`Malformed NUL-delimited ${label}: missing final NUL.`);
+  }
+  const records = output.split("\0");
+  records.pop();
+  if (records.some((record) => record.length === 0)) {
+    throw new Error(`Malformed NUL-delimited ${label}: empty record.`);
+  }
+  return records;
+}
+
+function pathCountForStatus(status: string): number {
+  if (/^[ADMTUB]$/.test(status)) return 1;
+  const similarity = /^([RC])([0-9]{1,3})$/.exec(status);
+  if (similarity && Number(similarity[2]) <= 100) return 2;
+  throw new Error(`Unknown or malformed Git name-status value: ${status}.`);
+}
+
 export function changedFilesFromNameStatus(output: string): string[] {
-  const fields = output.split("\0");
+  const fields = nulRecords(output, "git name-status output");
   const files: string[] = [];
-  for (let index = 0; index < fields.length - 1;) {
+  for (let index = 0; index < fields.length;) {
     const status = fields[index++];
-    if (!status) continue;
-    const requiresTwoPaths = /^[RC]/.test(status);
-    const paths = fields.slice(index, index + (requiresTwoPaths ? 2 : 1));
-    if (paths.length !== (requiresTwoPaths ? 2 : 1) || paths.some((value) => !value)) {
+    const pathCount = pathCountForStatus(status);
+    const paths = fields.slice(index, index + pathCount);
+    if (paths.length !== pathCount) {
       throw new Error("Malformed NUL-delimited git name-status output.");
     }
     files.push(...paths.map(normalizeGitPath));
-    index += paths.length;
+    index += pathCount;
   }
   return [...new Set(files)].sort();
+}
+
+function changedFilesFromNulPaths(output: string): string[] {
+  return nulRecords(output, "untracked Git path output").map(normalizeGitPath);
 }
 
 export async function assertCleanInteractiveWorktree(
@@ -94,7 +117,26 @@ export async function changedFilesSince(
   baselineCommit: string,
   runner: GitCommandRunner = new SpawnGitRunner(),
 ): Promise<string[]> {
-  return changedFilesFromNameStatus(await successful(runner, ["diff", "--name-status", "-z", baselineCommit, "--"]));
+  const tracked = await successful(runner, [
+    "diff",
+    "--name-status",
+    "-z",
+    baselineCommit,
+    "--",
+  ]);
+  const untracked = await successful(runner, [
+    "ls-files",
+    "--others",
+    "--exclude-standard",
+    "-z",
+    "--",
+  ]);
+  return [
+    ...new Set([
+      ...changedFilesFromNameStatus(tracked),
+      ...changedFilesFromNulPaths(untracked),
+    ]),
+  ].sort();
 }
 
 const DISALLOWED_PRODUCT_ROOTS = ["tests/", "tools/", "fixtures/", "public/", ".superpowers/"];

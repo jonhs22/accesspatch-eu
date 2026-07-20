@@ -55,3 +55,29 @@ The final commit SHA is returned in the task handoff (a Git commit cannot embed
 its own final object ID without changing that ID).
 
 No known task-scope concerns. CLI, dashboard, plugin, and RunStore persistence were intentionally left untouched.
+
+## Review follow-up
+
+The post-implementation review was addressed with a second strict RED → GREEN
+cycle:
+
+- tracked diffs are merged with NUL-delimited, non-ignored untracked paths;
+- malformed/truncated NUL output and unknown status values fail closed;
+- reset creates its fresh-clone lock parent, writes and syncs an exclusive
+  same-directory temporary file, verifies its SHA-256, then atomically renames;
+- reset failures preserve the live checkout and independently clean temporary
+  and lock resources; and
+- verification requires the exact frozen journey-check set and every required
+  after check to pass.
+
+Fresh focused verification after these fixes:
+
+```text
+Task 4 focused tests       40 passed, 4 files passed
+All tracked unit tests    114 passed, 16 files passed
+Global unit tests         132 passed, 18 files passed
+Typecheck and build       exit 0
+Task 4 diff check         exit 0
+```
+
+The follow-up commit SHA is reported in the task handoff.

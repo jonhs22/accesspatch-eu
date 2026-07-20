@@ -12,6 +12,11 @@ export interface VerifyOptions {
   diffPath: string;
 }
 const REQUIRED_FINDING_IDS = ["AP-EU-001", "AP-EU-002", "AP-EU-003"] as const;
+const REQUIRED_JOURNEY_IDS = [
+  "checkout-completes",
+  "focus-escapes-email",
+  "validation-announced",
+] as const;
 
 function compareFindings(before: EvidenceSet, after: EvidenceSet) {
   const baseline = new Set(before.findings.map(({ id }) => id));
@@ -26,12 +31,23 @@ export function verify(before: EvidenceSet, after: EvidenceSet, options: VerifyO
   const { resolved, remaining, regressions } = compareFindings(before, after);
   const patch = validateProductPatch(options.changedFiles, options.approvedCandidateFiles);
   const checkoutCompleted = after.journeyChecks.some((check) => check.id === "checkout-completes" && check.passed);
+  const afterJourneyIds = after.journeyChecks.map(({ id }) => id);
+  const hasExactJourneySet =
+    afterJourneyIds.length === REQUIRED_JOURNEY_IDS.length &&
+    afterJourneyIds.every((journeyId, index) => journeyId === REQUIRED_JOURNEY_IDS[index]);
+  const requiredJourneysPassed =
+    hasExactJourneySet && after.journeyChecks.every(({ passed }) => passed);
   const baselineJourneys = new Map(before.journeyChecks.map((check) => [check.id, check.passed]));
   const journeyRegression = after.journeyChecks.some((check) => baselineJourneys.get(check.id) === true && !check.passed);
   const failureReasons: string[] = [];
   if (remaining.length) failureReasons.push("Baseline findings remain after repair.");
   if (regressions.length) failureReasons.push("New serious or critical accessibility findings were introduced.");
   if (!checkoutCompleted) failureReasons.push("Checkout journey did not complete.");
+  if (!hasExactJourneySet) {
+    failureReasons.push("After journey-check set does not exactly match the frozen scanner checks.");
+  } else if (!requiredJourneysPassed) {
+    failureReasons.push("One or more required after journey checks failed.");
+  }
   if (journeyRegression) failureReasons.push("A previously passing journey regressed.");
   if (!patch.withinAllowlist) failureReasons.push(`Changed files are outside the approved allowlist: ${patch.rejectedPaths.join(", ")}.`);
   if (resolved.length !== REQUIRED_FINDING_IDS.length || resolved.some((id, index) => id !== REQUIRED_FINDING_IDS[index])) {
