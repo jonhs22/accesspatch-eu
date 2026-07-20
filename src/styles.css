@@ -1,0 +1,34 @@
+:root {
+  color: #101714;
+  background: #f5f4ee;
+  font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #f5f4ee;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #ff6b5f;
+}
