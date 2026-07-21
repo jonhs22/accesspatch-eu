@@ -74,6 +74,38 @@ export interface SubmissionCheckOptions {
   probeVideo?: (videoPath: string) => Promise<unknown>;
 }
 
+export function parseExternalHandoffs(checklist: string): string[] {
+  const lines = checklist.split(/\r?\n/);
+  const sectionStart = lines.findIndex((line) =>
+    /^##\s+External account handoff\s*$/i.test(line),
+  );
+  if (sectionStart < 0) return [];
+
+  const handoffs: string[] = [];
+  let current: string[] | null = null;
+  const finishCurrent = () => {
+    if (current) handoffs.push(current.join(" "));
+    current = null;
+  };
+
+  for (const line of lines.slice(sectionStart + 1)) {
+    if (/^#{1,2}\s+/.test(line)) break;
+    const item = line.match(/^\s*-\s+\[([ xX])\]\s+(.+?)\s*$/);
+    if (item) {
+      finishCurrent();
+      current = item[1] === " " ? [item[2].trim()] : null;
+      continue;
+    }
+    if (current && /^\s{2,}\S/.test(line)) {
+      current.push(line.trim());
+      continue;
+    }
+    if (line.trim().length > 0) finishCurrent();
+  }
+  finishCurrent();
+  return handoffs;
+}
+
 function relativeLabel(root: string, candidate: string): string {
   return path.relative(root, candidate).split(path.sep).join("/");
 }
@@ -348,15 +380,14 @@ export async function runSubmissionCheck(projectRoot = PROJECT_ROOT): Promise<{
   if (issues.length > 0) {
     throw new Error(`Submission check failed:\n${issues.join("\n")}`);
   }
-  const videoPath = path.join(projectRoot, "submission", "accesspatch-eu-demo.mp4");
+  const checklist = await readFile(
+    path.join(projectRoot, "submission", "SUBMISSION_CHECKLIST.md"),
+    "utf8",
+  );
   return {
     outcome: "passed",
     checkedAt: new Date().toISOString(),
-    externalHandoffs: [
-      "YouTube upload and public URL require the submitter's external account.",
-      "Devpost final submission requires the submitter's external account.",
-      "Codex /feedback session retrieval remains an explicit account handoff.",
-    ],
+    externalHandoffs: parseExternalHandoffs(checklist),
     mediaStatus: "validated",
   };
 }

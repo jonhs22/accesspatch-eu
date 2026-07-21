@@ -23,7 +23,7 @@
 
 ## External account handoff
 
-- [ ] Push the verified project to the public repository:
+- [x] Push the verified project to the public repository:
   https://github.com/jonhs22/accesspatch-eu
 - [x] Upload the verified MP4 to the submitter's YouTube account and copy its
   public URL: https://youtu.be/K0bKkyyBVIE

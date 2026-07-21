@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   collectSubmissionIssues,
   findSensitiveTextIssues,
+  parseExternalHandoffs,
   validateVideoProbe,
 } from "../../tools/accesspatch/submission-check.js";
 
@@ -16,6 +17,33 @@ afterEach(async () => {
 });
 
 describe("submission validation", () => {
+  it("parses only unchecked external handoff items with wrapped continuations", () => {
+    const checklist = `# Submission checklist
+
+- [ ] Ignore unchecked items outside the handoff section.
+
+## External account handoff
+
+- [x] Push the project to the public repository:
+  https://github.com/example/accesspatch-eu
+- [ ] Upload the verified MP4 and record its public URL:
+  https://youtu.be/example
+- [ ] Review the final Devpost preview and perform the
+  submit action.
+
+Unchecked items still require the submitter's authenticated account.
+
+## Notes
+
+- [ ] Ignore unchecked items in later sections.
+`;
+
+    expect(parseExternalHandoffs(checklist)).toEqual([
+      "Upload the verified MP4 and record its public URL: https://youtu.be/example",
+      "Review the final Devpost preview and perform the submit action.",
+    ]);
+  });
+
   it("returns deterministic sorted missing-artifact messages", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "accesspatch-submit-"));
     roots.push(root);
