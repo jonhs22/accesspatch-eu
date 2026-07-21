@@ -5,13 +5,16 @@ source-bounded repair and a deterministic verification receipt.
 
 Public repository: https://github.com/jonhs22/accesspatch-eu
 
+[![CI](https://github.com/jonhs22/accesspatch-eu/actions/workflows/ci.yml/badge.svg)](https://github.com/jonhs22/accesspatch-eu/actions/workflows/ci.yml)
+
 Public demo video: https://youtu.be/K0bKkyyBVIE
 
 ## Judge quick start
 
-The deterministic judge path requires no login and no OpenAI Platform API key.
-It uses frozen local fixtures, labels approval provenance as `test_fixture`, and
-does not present fixture approval as a human decision.
+The public repository is the judge test build. The deterministic path requires
+no login and no OpenAI Platform API key. It requires no account provisioning or
+code generation, uses frozen local fixtures, labels approval provenance as
+`test_fixture`, and does not present fixture approval as a human decision.
 
 Prerequisites:
 
@@ -52,7 +55,7 @@ Open:
 - Checkout: `http://127.0.0.1:4173/checkout`
 - Evidence dashboard: `http://127.0.0.1:4173/accesspatch`
 
-Two critical and one serious fixture blocker were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.
+Two critical and one serious fixture blockers were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.
 
 ## What the demonstration proves
 
@@ -122,7 +125,7 @@ The full safety contract is in
 | `npm run typecheck` | Run strict TypeScript checking without emitting files. |
 | `npm test` | Run the Vitest unit suite. |
 | `npm run test:e2e` | Run the serial non-media Playwright end-to-end suite. |
-| `npm run test:media` | Validate the local final MP4, captions, transcript, screenshots, and thumbnail. |
+| `npm run test:media` | Producer-only validation of the local final MP4, captions, transcript, screenshots, and thumbnail. |
 | `npm run accesspatch -- scan --phase before` | Start an interactive evidence run. |
 | `npm run accesspatch -- scan --phase after` | Capture post-patch evidence. |
 | `npm run accesspatch -- verify` | Produce a deterministic verification receipt. |
@@ -130,6 +133,10 @@ The full safety contract is in
 | `npm run demo:verify` | Run the complete no-login deterministic fixture demonstration. |
 | `npm run judge` | Print the local judge path and expected result. |
 | `npm run submission:check` | Validate the local submission package. |
+
+The final MP4 is published through the public YouTube URL rather than the Git
+clone, so `test:media` and `submission:check` are producer-side packaging gates,
+not part of the clean-clone judge path.
 
 See [`docs/testing.md`](docs/testing.md) for clean-clone and CI gates.
 

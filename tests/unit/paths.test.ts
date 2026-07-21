@@ -18,6 +18,13 @@ it("rejects a prefix collision beside the project root", () => {
 });
 
 it("rejects a path outside the project root", () => {
+  const outsideProject = path.resolve(PROJECT_ROOT, "..", "outside", "report.json");
+  expect(() =>
+    assertInsideProject(outsideProject),
+  ).toThrow(/outside project root/i);
+});
+
+it.runIf(process.platform === "win32")("rejects an absolute Windows path outside the project", () => {
   expect(() =>
     assertInsideProject("C:\\Users\\User\\Desktop\\outside\\report.json"),
   ).toThrow(/outside project root/i);

@@ -8,6 +8,7 @@ account, payment provider, customer record, or live transaction. Run:
 
 ```text
 npm ci
+npx playwright install chromium
 npm run demo:verify
 npm run judge
 ```

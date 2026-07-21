@@ -790,8 +790,8 @@ Expected: FAIL with sorted missing-artifact messages.
 Use this claim exactly:
 
 ```text
-All three known critical fixture blockers were resolved, no new critical axe
-finding appeared, and the scripted keyboard checkout completed.
+Two critical and one serious fixture blockers were resolved, no new serious or
+critical axe finding appeared, and the scripted keyboard checkout completed.
 ```
 
 Use this limitation exactly:
@@ -865,7 +865,7 @@ git commit -m "docs: prepare complete Build Week submission"
 Require:
 
 - four screenshots at 1920×1080;
-- thumbnail at 3840×2160 plus 1280×720 fallback;
+- Devpost thumbnail at 3000×2000 (3:2) plus 1280×720 fallback;
 - final video at 1920×1080, 30 fps, yuv420p, H.264, AAC stereo;
 - duration from 150 through 175 seconds;
 - non-zero English audio duration;
@@ -962,7 +962,8 @@ In a new Codex task:
 4. approve the constrained patch;
 5. verify the repaired keyboard journey;
 6. inspect the dashboard and diff; and
-7. obtain the required `/feedback` Session ID.
+7. obtain the required Session ID with the current `/status` command (the
+   Official Rules retain the older `/feedback` wording).
 
 Insert the actual ID into submission copy and rerun validation.
 

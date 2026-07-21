@@ -30,6 +30,7 @@ const REQUIRED_IMAGES = [
   ["submission/screenshots/02-evidence-pack.png", 1920, 1080],
   ["submission/screenshots/03-approved-source-diff.png", 1920, 1080],
   ["submission/screenshots/04-verified-before-after.png", 1920, 1080],
+  ["submission/accesspatch-eu-thumbnail.png", 3000, 2000],
   ["submission/accesspatch-eu-thumbnail-1280x720.png", 1280, 720],
 ] as const;
 

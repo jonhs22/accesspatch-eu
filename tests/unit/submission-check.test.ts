@@ -95,4 +95,12 @@ Unchecked items still require the submitter's authenticated account.
       "Missing required artifact: submission/accesspatch-eu-demo.mp4",
     );
   });
+
+  it("requires the Devpost 3:2 thumbnail in the local submission package", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "accesspatch-submit-"));
+    roots.push(root);
+    expect(await collectSubmissionIssues(root)).toContain(
+      "Missing required artifact: submission/accesspatch-eu-thumbnail.png",
+    );
+  });
 });

@@ -116,7 +116,7 @@ try {
   <section class="receipt"><h2>Verification receipt</h2><div class="stat"><span>Known blockers</span><strong>3 / 3 resolved</strong></div>
   <div class="stat"><span>Critical regressions</span><strong>0</strong></div><div class="stat"><span>Keyboard checkout</span><strong>PASS</strong></div>
   <div class="stat"><span>Diff allowlist</span><strong>PASS</strong></div></section></main></body></html>`;
-  await page.setViewportSize({ width: 3840, height: 2160 });
+  await page.setViewportSize({ width: 3000, height: 2000 });
   await page.setContent(thumbnailHtml);
   await page.screenshot({
     path: path.join(submissionRoot, "accesspatch-eu-thumbnail.png"),

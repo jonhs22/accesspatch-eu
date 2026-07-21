@@ -31,8 +31,9 @@ test provenance, not a claim that a human approved that fixture copy.
 
 ## Feedback session
 
-Feedback session retrieval is an explicit account handoff: in the primary
-signed-in Codex task, the submitter runs `/feedback`, copies the returned
-session identifier into the Devpost submission field, and then performs the
+Session retrieval is an explicit account handoff. The Official Rules use the
+older `/feedback` wording, while the current hackathon FAQ directs submitters to
+run `/status`. In the primary signed-in Codex task, the submitter copies the
+returned session identifier into the Devpost field and then performs the
 external submit action. Repository automation cannot truthfully retrieve or
 publish that account-bound identifier.

@@ -7,7 +7,7 @@
   documented commands.
 - [x] Deterministic judge flow records `deterministic_fixture` and
   `test_fixture` provenance.
-- [x] Four 1920x1080 screenshots and a 1280x720 thumbnail are present.
+- [x] Four 1920x1080 screenshots, a 3000x2000 Devpost thumbnail, and a 1280x720 fallback are present.
 - [x] Final Devpost copy, demo script, transcript, and captions are English.
 - [x] Asset provenance is recorded in `assets/ASSET_LEDGER.md`.
 - [x] Secret and submission validators are included.

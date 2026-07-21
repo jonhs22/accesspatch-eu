@@ -48,7 +48,7 @@ test("@media submission media matches the Build Week delivery contract", async (
 
   const thumbnail = probe("submission/accesspatch-eu-thumbnail.png").streams[0];
   const thumbnailFallback = probe("submission/accesspatch-eu-thumbnail-1280x720.png").streams[0];
-  expect([thumbnail.width, thumbnail.height]).toEqual([3840, 2160]);
+  expect([thumbnail.width, thumbnail.height]).toEqual([3000, 2000]);
   expect([thumbnailFallback.width, thumbnailFallback.height]).toEqual([1280, 720]);
 
   const videoProbe = probe("submission/accesspatch-eu-demo.mp4");

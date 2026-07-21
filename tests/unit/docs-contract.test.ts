@@ -20,7 +20,7 @@ const requiredDocs = [
 ] as const;
 
 const claim =
-  "Two critical and one serious fixture blocker were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.";
+  "Two critical and one serious fixture blockers were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.";
 const limitation =
   "AccessPatch EU produces technical remediation evidence, not legal advice, certification, or a guarantee of EAA/WCAG compliance. AI-proposed patches require human review.";
 

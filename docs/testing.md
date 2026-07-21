@@ -64,10 +64,10 @@ does not excuse a missing or invalid local artifact.
 | `npm run typecheck` | Strict TypeScript contracts across `src`, `tools`, tests, and build/test configuration. |
 | `npm test` | Vitest unit tests under `tests/unit/**/*.test.ts`. |
 | `npm run test:e2e` | Non-media Playwright tests under `tests/e2e` against the local Vite server. |
-| `npm run test:media` | Local MP4 stream metadata, duration, size, screenshots, thumbnail, captions, transcript, and privacy metadata. |
+| `npm run test:media` | Producer-only local MP4 stream metadata, duration, size, screenshots, thumbnail, captions, transcript, and privacy metadata. |
 | `npm run build` | The React application produces a Vite production build. |
 | `npm run demo:verify` | The complete deterministic fixture state machine passes and restores source bytes. |
-| `npm run submission:check` | Required documents/media metadata, asset coverage, unfinished copy, and secret-like text. |
+| `npm run submission:check` | Producer-only submission documents/media metadata, asset coverage, unfinished copy, and secret-like text. |
 
 ## Unit-test coverage
 
