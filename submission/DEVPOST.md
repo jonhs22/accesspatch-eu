@@ -83,6 +83,8 @@ Public YouTube URL: https://youtu.be/K0bKkyyBVIE
 
 Public source repository: https://github.com/jonhs22/accesspatch-eu
 
+Primary Codex Session ID: `019f7fed-5bbd-78e1-83b8-8c5ef532a3af`
+
 The published video uses the verified `submission/accesspatch-eu-demo.mp4`, the
 submission thumbnail, and the timed English captions in
 `submission/DEMO_CAPTIONS.srt`.

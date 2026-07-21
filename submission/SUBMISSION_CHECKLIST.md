@@ -27,8 +27,8 @@
   https://github.com/jonhs22/accesspatch-eu
 - [x] Upload the verified MP4 to the submitter's YouTube account and copy its
   public URL: https://youtu.be/K0bKkyyBVIE
-- [ ] Run `/feedback` in the primary signed-in Codex task and copy the returned
-  session identifier into the required submission field.
+- [x] Retrieve the primary build task identifier with `/status` and record the
+  Session ID: `019f7fed-5bbd-78e1-83b8-8c5ef532a3af`.
 - [ ] Review the final Devpost preview and perform the submit action.
 
 Unchecked items still require completion in the submitter's authenticated
