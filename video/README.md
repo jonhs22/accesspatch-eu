@@ -9,11 +9,15 @@ Windows environment described below.
 - `narration.txt` is the English voice and caption transcript.
 - `scenes.json` maps every on-screen claim to project evidence.
 - `accesspatch-demo/index.html` is the HyperFrames composition source.
+- `accesspatch-demo/assets/live-footage/` contains privacy-safe recordings of
+  the real checkout, `npm run demo:verify`, and persisted receipt.
 - Root `DESIGN.md` controls palette, typography, spacing, and motion.
 
-All storefront content, identities, form values, screenshots, and product art
-are synthetic. The composition contains no account chrome, credentials,
-third-party logos, customer data, or downloaded stock media.
+All storefront content, identities, form values, and product art are
+synthetic. The live footage is captured from localhost with external requests
+blocked and no persistent browser profile. The composition contains no account
+chrome, credentials, third-party logos, customer data, or downloaded stock
+media.
 
 ## Reproduce
 
@@ -32,6 +36,7 @@ From the repository root:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/synthesize-narration.ps1
+powershell -ExecutionPolicy Bypass -Command "node scripts/capture-live-footage.mjs"
 powershell -ExecutionPolicy Bypass -File scripts/record-workflow.ps1
 powershell -ExecutionPolicy Bypass -File scripts/render-video.ps1
 powershell -ExecutionPolicy Bypass -File scripts/verify-video.ps1

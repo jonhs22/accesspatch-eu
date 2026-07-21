@@ -4,45 +4,45 @@ A checkout can look finished and still stop a keyboard user cold. AccessPatch
 EU turns that failure into an evidence-backed patch, then proves the same
 journey works.
 
-Here is the synthetic Lattice Supply checkout. I start secure checkout using
-only the keyboard. The email receives focus, but every Tab is intercepted and
-returned to it. Five presses later, focus has not moved. The payment control is
-unnamed, and the visible validation error is silent to assistive technology.
+This is the real synthetic Lattice Supply checkout on localhost. I open secure
+checkout and use only the keyboard. Every Tab is intercepted and returned to
+the invalid email. Five presses later, focus has not moved. The payment control
+is unnamed, and the visible error is silent to assistive technology.
 
-AccessPatch reruns that exact journey with Playwright and axe-core. It records
-the keyboard trace, DOM and accessibility evidence, a screenshot, and source
-hints. The baseline ends with three stable blocker IDs, not a vague checklist.
+Now I run `npm run demo:verify`. This is genuine process output. The script
+resets the fixture, starts the app, captures before evidence, writes
+deterministic proposals, installs the frozen repair, scans again, verifies the
+journey, and restores the original source bytes.
 
-The evidence view connects each runtime failure to a source marker: AP-EU-001
-for the unnamed control, AP-EU-002 for repeated focus, and AP-EU-003 for the
-unannounced error. This is a bounded, synthetic localhost target; no customer
-or payment data leaves the machine.
+The evidence pack contains a screenshot, sanitized DOM and accessibility data,
+a keyboard trace, and source hints. It produces three stable findings:
+AP-EU-001 and AP-EU-002 are critical; AP-EU-003 is serious. External requests
+are blocked and stored form values are scrubbed.
 
-Inside the signed-in Codex workflow, GPT-5.6 reads those artifacts and
-correlates behavior with the responsible React source. It proposes the smallest
-behavioral changes: add an accessible name, remove the Tab trap, and announce
-validation while returning focus to the invalid field. Deterministic tests,
-not the model, decide pass/fail.
+For judges, this path is labeled `deterministic_fixture` with approval actor
+`test_fixture`. It needs no login and never pretends a person approved it.
+Separately, the interactive workflow runs inside signed-in Codex. GPT-5.6
+proposes bounded candidate changes, but cannot approve them or decide whether
+they pass.
 
-Crucially, nothing is edited yet. AccessPatch shows the candidate files,
-intended behavior, and editable root. A human must explicitly approve. Only
-then may Codex patch `src/checkout`, and an allowlist rejects any diff outside
-that boundary.
+Every edit is limited to `src/checkout/CheckoutPage.tsx`. The real diff removes
+the Tab trap, names the payment action `Confirm and pay €42.00`, connects the
+error with `aria-describedby`, adds alert and `aria-live` semantics, and
+focuses the invalid email. The allowlist rejects every other file.
 
-After approval, the constrained diff changes only the evidence-backed
-behavior. AccessPatch scans again and replays the original keyboard journey.
-This time Tab advances through the dialog, the payment action has a useful
-name, invalid input is announced, and a valid keyboard submission reaches
-order confirmation.
+AccessPatch replays the same Playwright journey. Tab advances, the payment
+action exposes its name, invalid input is announced, and a valid keyboard
+submission reaches order confirmation. Deterministic checks, not the model,
+decide the outcome.
 
-The verification receipt compares before and after: all three known critical
-fixture blockers were resolved, no new critical axe finding appeared, the
-scripted keyboard checkout completed, and the diff remained inside the
-editable root. Every claim links back to captured evidence and the approved
-source change.
+The receipt is real: two critical and one serious blocker are resolved, no new
+serious or critical regression appears, keyboard checkout passes, and the diff
+stays inside the approved root. The demo then restores the broken fixture byte
+for byte, keeping the repository repeatable while the dashboard retains genuine
+before and after evidence.
 
-I built this during OpenAI Build Week with Codex and GPT-5.6: architecture,
-tests, scanner, guarded workflow, plugin, dashboard, and submission tooling.
-The primary workflow uses the signed-in Codex client, so it needs no OpenAI
-Platform API key. AccessPatch EU provides technical remediation evidence, not
-legal advice or accessibility certification.
+To judge it, run `npm ci`, install Playwright Chromium, then run
+`npm run demo:verify`. The terminal ends with `AccessPatch verification: PASS`.
+This route needs no OpenAI Platform API key; the interactive route uses
+signed-in Codex. AccessPatch EU provides technical evidence, not legal advice,
+certification, or guaranteed compliance.

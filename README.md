@@ -48,7 +48,7 @@ Open:
 - Checkout: `http://127.0.0.1:4173/checkout`
 - Evidence dashboard: `http://127.0.0.1:4173/accesspatch`
 
-All three known critical fixture blockers were resolved, no new critical axe finding appeared, and the scripted keyboard checkout completed.
+Two critical and one serious fixture blocker were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.
 
 ## What the demonstration proves
 

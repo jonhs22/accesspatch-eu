@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type {
   EvidenceSet,
   Finding,
@@ -6,6 +7,8 @@ import type {
 import type { DashboardRunModel } from "./dashboard-model.js";
 import { useCurrentRun } from "./useCurrentRun.js";
 import "./dashboard.css";
+
+const JUDGE_COMMAND = "npm run demo:verify";
 
 function artifactUrl(path: string): string {
   return path.startsWith("public/") ? `/${path.slice("public/".length)}` : "#";
@@ -132,6 +135,44 @@ function Journey({ model }: { model: DashboardRunModel }) {
   );
 }
 
+function JudgeCommand() {
+  const [copied, setCopied] = useState(false);
+
+  async function copyCommand() {
+    await navigator.clipboard.writeText(JUDGE_COMMAND);
+    setCopied(true);
+  }
+
+  return (
+    <section className="ap-judge" aria-labelledby="judge-command-title">
+      <div>
+        <p className="ap-eyebrow">Run the genuine local workflow</p>
+        <h2 id="judge-command-title">Judge command</h2>
+        <p>
+          This reproducible path records run mode <code>deterministic_fixture</code>
+          {" "}and approval actor <code>test_fixture</code>. That actor is an automated
+          fixture—not a human approval.
+        </p>
+      </div>
+      <div className="ap-command">
+        <code>{JUDGE_COMMAND}</code>
+        <button
+          type="button"
+          aria-label={copied ? "Judge command copied" : "Copy judge command"}
+          onClick={copyCommand}
+        >
+          {copied ? "Copied" : "Copy command"}
+        </button>
+      </div>
+      <p className="ap-fixture-note">
+        After verification, <code>demo:verify</code> restores the original deliberately
+        broken fixture. The genuine before/after receipt remains here as evidence of
+        the passed run.
+      </p>
+    </section>
+  );
+}
+
 function RunDashboard({ model }: { model: DashboardRunModel }) {
   const manifest = model.manifest;
   const checkoutCheck = manifest.after?.journeyChecks.find(
@@ -165,6 +206,8 @@ function RunDashboard({ model }: { model: DashboardRunModel }) {
         <span>Run: <code>{model.runId}</code></span>
       </div>
 
+      <JudgeCommand />
+
       <Journey model={model} />
 
       <section className="ap-metrics" aria-label="Run metrics">
@@ -196,7 +239,7 @@ function RunDashboard({ model }: { model: DashboardRunModel }) {
             <p className="ap-eyebrow">Before / after evidence</p>
             <h2 id="evidence-title">The receipt starts with what the browser saw.</h2>
           </div>
-          <a className="ap-text-link" href={model.targetUrl}>Open synthetic checkout</a>
+          <a className="ap-text-link" href={model.targetUrl}>Open restored broken fixture</a>
         </div>
         <div className="ap-evidence-grid">
           <EvidenceFigure evidence={manifest.before} label="Before patch" />
@@ -285,6 +328,14 @@ function RunDashboard({ model }: { model: DashboardRunModel }) {
 
 export function DashboardPage() {
   const { loading, model, refresh } = useCurrentRun();
+
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = "AccessPatch EU";
+    return () => {
+      document.title = previousTitle;
+    };
+  }, []);
 
   return (
     <main className="accesspatch-page">

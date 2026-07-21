@@ -25,7 +25,7 @@ verification without an account or OpenAI Platform API key. Its manifest is
 plainly labeled `deterministic_fixture` with actor `test_fixture`; it is not
 represented as human approval.
 
-All three known critical fixture blockers were resolved, no new critical axe finding appeared, and the scripted keyboard checkout completed.
+Two critical and one serious fixture blocker were resolved, no new serious or critical axe finding appeared, and the scripted keyboard checkout completed.
 
 ## How we built it
 

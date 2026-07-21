@@ -239,7 +239,8 @@
         background: var(--mint);
       }
 
-      .browser-frame img {
+      .browser-frame img,
+      .browser-frame video {
         width: 100%;
         height: 688px;
         display: block;
@@ -290,11 +291,64 @@
         box-shadow: 18px 18px 0 var(--ink);
       }
 
-      .image-stage img {
+      .image-stage img,
+      .image-stage video {
         width: 100%;
         height: 100%;
+        display: block;
         object-fit: cover;
         object-position: center top;
+      }
+
+      .live-badge {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        z-index: 5;
+        padding: 11px 16px;
+        border: 2px solid var(--mint);
+        background: rgba(7, 16, 13, 0.94);
+        color: var(--mint);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 17px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .live-video {
+        display: block;
+        border: 0;
+        background: var(--ink-soft);
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      #live-before-video {
+        left: 109px;
+        top: 156px;
+        width: 1252px;
+        height: 688px;
+      }
+
+      #live-terminal-start-video {
+        left: 95px;
+        top: 231px;
+        width: 1730px;
+        height: 724px;
+      }
+
+      #live-terminal-pass-video {
+        left: 95px;
+        top: 115px;
+        width: 1263px;
+        height: 731px;
+      }
+
+      #live-receipt-video {
+        left: 95px;
+        top: 121px;
+        width: 1089px;
+        height: 724px;
       }
 
       .scan-line {
@@ -727,7 +781,6 @@
         <div class="screen-layout">
           <div class="browser-frame">
             <div class="browser-bar"><i></i><i></i><i></i></div>
-            <img src="assets/checkout-blocked.png" alt="" />
           </div>
           <div class="keyboard-panel">
             <div class="eyebrow">Keyboard trace</div>
@@ -737,25 +790,21 @@
             <div class="blocked-label">same target<br /><span class="mono">input#email</span></div>
           </div>
         </div>
-        <div class="source-note">Synthetic product and identity · no payment data</div>
       </section>
 
       <section id="scene3" class="scene clip" data-start="33.48" data-duration="16" data-track-index="3">
         <div class="top-rail">
-          <span>02 / Evidence capture</span>
-          <div class="rail-meta"><span>Playwright</span><span>axe-core</span></div>
+          <span>02 / Live deterministic run</span>
+          <div class="rail-meta"><span>npm run demo:verify</span><span class="mint-dark">real output</span></div>
         </div>
         <div class="evidence-header">
           <div>
-            <div class="eyebrow">Atomic evidence pack</div>
-            <h2>Replay the failure. Keep the proof.</h2>
+            <div class="eyebrow">Reproducible judge path</div>
+            <h2>Run the workflow. Watch the evidence arrive.</h2>
           </div>
-          <div class="counter">3 stable blockers</div>
+          <div class="counter">no login · no API key</div>
         </div>
         <div class="image-stage">
-          <img src="assets/accesspatch-awaiting-approval.png" alt="" />
-          <div id="scan-line" class="scan-line"></div>
-          <div class="scan-badge">capturing · DOM · ARIA · keyboard · screenshot</div>
         </div>
       </section>
 
@@ -791,50 +840,49 @@
 
       <section id="scene5" class="scene dark clip" data-start="67.64" data-duration="23.72" data-track-index="5">
         <div class="top-rail">
-          <span>04 / Codex-assisted correlation</span>
-          <div class="rail-meta"><span class="mint">GPT-5.6</span><span>real artifacts</span></div>
+          <span>04 / Two truthful paths</span>
+          <div class="rail-meta"><span class="mint">same evidence contract</span></div>
         </div>
         <div class="correlation-layout">
           <div class="model-card">
-            <div class="model-name">Signed-in Codex workflow</div>
-            <h2>Smallest evidence-backed change.</h2>
-            <p>Runtime behavior is correlated with the responsible React markers. The model proposes; deterministic gates decide.</p>
+            <div class="model-name">Interactive path · signed-in Codex</div>
+            <h2>Model proposes. Human approves.</h2>
+            <p>GPT-5.6 reads bounded artifacts. A real person controls approval. Deterministic gates decide pass or fail.</p>
           </div>
           <div class="code-board">
             <div class="proposal">
-              <div class="proposal-id mono">AP-EU-001 · CheckoutDialog.tsx</div>
-              <p>Add an explicit accessible name to the payment action.</p>
+              <div class="proposal-id mono">AP-EU-001 · CheckoutPage.tsx · critical</div>
+              <p>Name the payment action from captured runtime evidence.</p>
             </div>
             <div class="proposal">
-              <div class="proposal-id mono">AP-EU-002 · CheckoutDialog.tsx</div>
-              <p>Remove Tab interception and preserve the browser focus sequence.</p>
+              <div class="proposal-id mono">AP-EU-002 · CheckoutPage.tsx · critical</div>
+              <p>Remove Tab interception and restore browser focus order.</p>
             </div>
             <div class="proposal">
-              <div class="proposal-id mono">AP-EU-003 · CheckoutDialog.tsx</div>
-              <p>Announce validation and focus the invalid field.</p>
+              <div class="proposal-id mono">AP-EU-003 · CheckoutPage.tsx · serious</div>
+              <p>Expose validation as an alert and focus the invalid field.</p>
             </div>
-            <div class="test-decision">PASS authority: scanner + tests + allowlist</div>
+            <div class="test-decision">Judge path: deterministic_fixture · approval actor: test_fixture</div>
           </div>
         </div>
       </section>
 
       <section id="scene6" class="scene clip" data-start="90.64" data-duration="17.72" data-track-index="6">
         <div class="top-rail">
-          <span>05 / Explicit approval</span>
-          <div class="rail-meta"><span class="coral">no edit before approval</span></div>
+          <span>05 / Truthful fixture provenance</span>
+          <div class="rail-meta"><span class="coral">not represented as human approval</span></div>
         </div>
         <div class="approval-layout">
           <div class="image-stage">
-            <img src="assets/approval-gate.png" alt="" />
           </div>
           <div class="gate">
-            <div class="eyebrow">State gate</div>
+            <div class="eyebrow">Judge state gate</div>
             <div class="gate-state locked">awaiting_approval</div>
             <div class="gate-arrow">↓</div>
-            <div class="gate-state approved">human approved</div>
+            <div class="gate-state approved">test_fixture approved</div>
             <div class="gate-arrow">↓</div>
-            <div class="gate-state">patching</div>
-            <p class="blocked-label">Editable root<br /><span class="mono">src/checkout/**</span></p>
+            <div class="gate-state">verification PASS</div>
+            <p class="blocked-label">Source restored<br /><span class="mono">byte for byte</span></p>
           </div>
         </div>
       </section>
@@ -846,13 +894,11 @@
         </div>
         <div class="diff-layout">
           <div class="diff-board">
-            <div class="file mono">src/checkout/CheckoutDialog.tsx</div>
-            <div class="diff-line minus">- aria-label=""</div>
-            <div class="diff-line plus">+ aria-label="Pay securely"</div>
-            <div class="diff-line minus">- onKeyDown={trapTabOnEmail}</div>
-            <div class="diff-line plus">+ onKeyDown={handleDialogKeys}</div>
-            <div class="diff-line minus">- &lt;p className="error"&gt;</div>
-            <div class="diff-line plus">+ &lt;p role="alert" aria-live="assertive"&gt;</div>
+            <div class="file mono">src/checkout/CheckoutPage.tsx · actual verified diff</div>
+            <div class="diff-line minus">- onKeyDown={trapEmailTab}</div>
+            <div class="diff-line plus">+ aria-label="Confirm and pay €42.00"</div>
+            <div class="diff-line plus">+ aria-describedby={error ? "form-error" : undefined}</div>
+            <div class="diff-line plus">+ &lt;p id="form-error" role="alert" aria-live="assertive"&gt;</div>
             <div class="diff-line plus">+ emailRef.current?.focus()</div>
           </div>
           <div>
@@ -875,11 +921,10 @@
         </div>
         <div class="receipt-layout">
           <div class="image-stage">
-            <img src="assets/accesspatch-verified.png" alt="" />
           </div>
           <div class="receipt-stats">
-            <div class="stat"><strong>3 / 3</strong><span>known critical fixture blockers resolved</span></div>
-            <div class="stat"><strong>0</strong><span>new critical axe findings</span></div>
+            <div class="stat"><strong>3 / 3</strong><span>2 critical + 1 serious resolved</span></div>
+            <div class="stat"><strong>0</strong><span>new serious / critical regressions</span></div>
             <div class="stat"><strong>PASS</strong><span>scripted keyboard checkout</span></div>
             <div class="stat"><strong>1 root</strong><span>diff inside approved scope</span></div>
           </div>
@@ -896,42 +941,48 @@
             <div class="eyebrow mint">Built with Codex + GPT-5.6</div>
             <h2>From blocker to verified repair.</h2>
             <div class="contribution-list">
-              <div class="contribution">architecture</div>
-              <div class="contribution">scanner</div>
-              <div class="contribution">guarded workflow</div>
-              <div class="contribution">tests</div>
-              <div class="contribution">dashboard</div>
-              <div class="contribution">Codex plugin</div>
+              <div class="contribution">Playwright + axe</div>
+              <div class="contribution">bounded proposals</div>
+              <div class="contribution">allowlisted patch</div>
+              <div class="contribution">deterministic replay</div>
+              <div class="contribution">genuine receipt</div>
+              <div class="contribution">source restored</div>
             </div>
           </div>
           <div class="final-proof">
-            <div class="big">No Platform API key required.</div>
-            <p>The primary workflow runs through the signed-in Codex client.</p>
+            <div class="big mono">npm run demo:verify</div>
+            <p>Expected result: <strong>AccessPatch verification: PASS</strong></p>
+            <p>No Platform API key is required for this deterministic judge path. The interactive path uses signed-in Codex.</p>
             <p class="disclaimer">Technical remediation evidence—not legal advice, certification, or a guarantee of EAA/WCAG compliance. AI-proposed patches require human review.</p>
           </div>
         </div>
       </section>
+
+      <video id="live-before-video" class="clip live-video" src="assets/live-footage/scene-before.mp4" muted playsinline preload="auto" data-start="11.64" data-duration="22.72" data-track-index="20" data-media-start="0" data-volume="0"></video>
+      <video id="live-terminal-start-video" class="clip live-video" src="assets/live-footage/scene-terminal-start.mp4" muted playsinline preload="auto" data-start="33.48" data-duration="16" data-track-index="21" data-media-start="0" data-volume="0"></video>
+      <video id="live-terminal-pass-video" class="clip live-video" src="assets/live-footage/scene-terminal-pass.mp4" muted playsinline preload="auto" data-start="90.64" data-duration="17.72" data-track-index="22" data-media-start="0" data-volume="0"></video>
+      <video id="live-receipt-video" class="clip live-video" src="assets/live-footage/scene-receipt.mp4" muted playsinline preload="auto" data-start="127.48" data-duration="18.88" data-track-index="23" data-media-start="0" data-volume="0"></video>
 
     </div>
 
     <script>
       const narration = `A checkout can look finished and still stop a keyboard user cold. AccessPatch EU turns that failure into an evidence-backed patch, then proves the same journey works.
 
-Here is the synthetic Lattice Supply checkout. I start secure checkout using only the keyboard. The email receives focus, but every Tab is intercepted and returned to it. Five presses later, focus has not moved. The payment control is unnamed, and the visible validation error is silent to assistive technology.
+This is the real synthetic Lattice Supply checkout on localhost. I open secure checkout and use only the keyboard. Every Tab is intercepted and returned to the invalid email. Five presses later, focus has not moved. The payment control is unnamed, and the visible error is silent to assistive technology.
 
-AccessPatch reruns that exact journey with Playwright and axe-core. It records the keyboard trace, DOM and accessibility evidence, a screenshot, and source hints. The baseline ends with three stable blocker IDs, not a vague checklist.
+Now I run npm run demo colon verify. This is genuine process output. The script resets the fixture, starts the app, captures before evidence, writes deterministic proposals, installs the frozen repair, scans again, verifies the journey, and restores the original source bytes.
 
-The evidence view connects each runtime failure to a source marker: A P E U zero zero one for the unnamed control, zero zero two for repeated focus, and zero zero three for the unannounced error. This is a bounded, synthetic localhost target; no customer or payment data leaves the machine.
+The evidence pack contains a screenshot, sanitized DOM and accessibility data, a keyboard trace, and source hints. It produces three stable findings: A P E U zero zero one and zero zero two are critical; zero zero three is serious. External requests are blocked and stored form values are scrubbed.
 
-Inside the signed-in Codex workflow, GPT-5.6 reads those artifacts and correlates behavior with the responsible React source. It proposes the smallest behavioral changes: add an accessible name, remove the Tab trap, and announce validation while returning focus to the invalid field. Deterministic tests, not the model, decide whether the repair passes.
+For judges, this path is labeled deterministic fixture with approval actor test fixture. It needs no login and never pretends a person approved it. Separately, the interactive workflow runs inside signed-in Codex. GPT-5.6 proposes bounded candidate changes, but cannot approve them or decide whether they pass.
 
-Crucially, nothing is edited yet. AccessPatch shows the candidate files, intended behavior, and editable root. A human must explicitly approve. Only then may Codex patch source slash checkout, and an allowlist rejects any diff outside that boundary.
+Every edit is limited to source slash checkout slash CheckoutPage dot T S X. The real diff removes the Tab trap, names the payment action Confirm and pay forty-two euros, connects the error with aria described by, adds alert and aria live semantics, and focuses the invalid email. The allowlist rejects every other file.
 
-After approval, the constrained diff changes only the evidence-backed behavior. AccessPatch scans again and replays the original keyboard journey. This time Tab advances through the dialog, the payment action has a useful name, invalid input is announced, and a valid keyboard submission reaches order confirmation.
+AccessPatch replays the same Playwright journey. Tab advances, the payment action exposes its name, invalid input is announced, and a valid keyboard submission reaches order confirmation. Deterministic checks, not the model, decide the outcome.
 
-The verification receipt compares before and after: all three known critical fixture blockers were resolved, no new critical axe finding appeared, the scripted keyboard checkout completed, and the diff remained inside the editable root. Every claim links back to captured evidence and the approved source change.
+The receipt is real: two critical and one serious blocker are resolved, no new serious or critical regression appears, keyboard checkout passes, and the diff stays inside the approved root. The demo then restores the broken fixture byte for byte, keeping the repository repeatable while the dashboard retains genuine before and after evidence.
 
-I built this during OpenAI Build Week with Codex and GPT-5.6: architecture, tests, scanner, guarded workflow, plugin, dashboard, and submission tooling. The primary workflow uses the signed-in Codex client, so it needs no OpenAI Platform API key. AccessPatch EU provides technical remediation evidence, not legal advice or accessibility certification.`;
+To judge it, run npm ci, install Playwright Chromium, then run npm run demo colon verify. The terminal ends with AccessPatch verification: pass. This route needs no OpenAI Platform API key; the interactive route uses signed-in Codex. AccessPatch EU provides technical evidence, not legal advice, certification, or guaranteed compliance.`;
 
       const captionWords = narration.trim().split(/\s+/);
       const captionGroups = [];
@@ -979,7 +1030,6 @@ I built this during OpenAI Build Week with Codex and GPT-5.6: architecture, test
       tl.from("#scene3", { x: 1920, duration: 0.52, ease: "power3.inOut" }, 33.48);
       tl.from("#scene3 .evidence-header", { opacity: 0, y: 28, duration: 0.46, ease: "power2.out" }, 34.05);
       tl.from("#scene3 .image-stage", { opacity: 0, y: 32, duration: 0.55, ease: "power2.out" }, 34.28);
-      tl.fromTo("#scan-line", { y: 0 }, { y: 710, duration: 3.2, ease: "power1.inOut" }, 35.1);
 
       tl.from("#scene4", { x: 1920, duration: 0.36, ease: "power3.inOut" }, 49.48);
       tl.from("#scene4 .finding-row", { opacity: 0, x: -42, duration: 0.46, stagger: 0.2, ease: "power2.out" }, 50.08);

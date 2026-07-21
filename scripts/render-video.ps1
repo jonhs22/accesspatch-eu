@@ -40,7 +40,7 @@ try {
     # PNG sequence avoids host-specific codec flags in bundled FFmpeg builds.
     # The authored frames are sampled at 10 fps, then deterministically conformed
     # to the required 30 fps delivery stream by the final encoder.
-    npx --yes hyperframes@0.7.64 render --format png-sequence --fps 10 --quality high --workers 6 --output $framesPath
+    npx --yes hyperframes@0.7.64 render --format png-sequence --fps 10 --quality high --workers 6 --video-frame-format png --output $framesPath
     if ($LASTEXITCODE -ne 0) { throw "HyperFrames PNG-sequence render failed." }
 }
 finally {

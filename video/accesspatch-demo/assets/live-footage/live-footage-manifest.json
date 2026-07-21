@@ -1,0 +1,120 @@
+{
+  "generatedBy": "scripts/capture-live-footage.mjs",
+  "privacy": {
+    "localOnly": true,
+    "externalRequestsBlocked": true,
+    "persistentBrowserProfile": false,
+    "accountChrome": false,
+    "syntheticCheckoutDataOnly": true
+  },
+  "provenance": {
+    "command": "npm run demo:verify",
+    "runId": "demo-20260721142104-9e82f739",
+    "workflowStdoutSha256": "10364b54593b2c55308425580cae59a1eb5b67cf556ccee4cf262970889dfecf",
+    "checkoutFocusTrail": [
+      "email",
+      "email",
+      "email",
+      "email",
+      "email"
+    ],
+    "sourceSha256Before": "f138c936b411ece51e7b21f31ceef04bffe6c0b36eaf512176f03b31893d75b5",
+    "sourceSha256After": "f138c936b411ece51e7b21f31ceef04bffe6c0b36eaf512176f03b31893d75b5",
+    "sourceRestoredExactly": true
+  },
+  "clips": [
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/live-before.mp4",
+      "durationSeconds": 8.867,
+      "bytes": 236107,
+      "sha256": "8c5fcc637853f9790dd14805bd3059c84327914428807ad471b6973ef5f1d881",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    },
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/live-terminal.mp4",
+      "durationSeconds": 14.467,
+      "bytes": 1080413,
+      "sha256": "987826c03db6453d6b1b2cca6cd1e499999b1621b8e0e6e56674f233c7a5e422",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    },
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/live-receipt.mp4",
+      "durationSeconds": 10.233,
+      "bytes": 565679,
+      "sha256": "43fa3a35eb7fa87b7d9e1b2bb952e7d990894d50bfc985476a567d83d7aebe6a",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    }
+  ],
+  "sceneClips": [
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/scene-before.mp4",
+      "durationSeconds": 23,
+      "bytes": 1372827,
+      "sha256": "6e5fa33cbad5f1a8a732b1d7a6fdce955e25b08ddf9ed4d3825cc64a61315f13",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    },
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/scene-terminal-start.mp4",
+      "durationSeconds": 16.2,
+      "bytes": 1932895,
+      "sha256": "e6e301b7cd8df6a2fe76293315b22d4d30e504a206fee8a7747d5a78574ce4fc",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    },
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/scene-terminal-pass.mp4",
+      "durationSeconds": 18,
+      "bytes": 1986282,
+      "sha256": "40225a11819d3e761816bf91cc8adfe6fb9998fe64c62428eaad7c3b76ba35a0",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    },
+    {
+      "file": "video/accesspatch-demo/assets/live-footage/scene-receipt.mp4",
+      "durationSeconds": 19.2,
+      "bytes": 1556946,
+      "sha256": "b881be3eddbda3e73d739ed5d74f246b88e4ced6010451b5bec6c614905cff9b",
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "pixelFormat": "yuv420p",
+        "frameRate": "30/1"
+      }
+    }
+  ]
+}

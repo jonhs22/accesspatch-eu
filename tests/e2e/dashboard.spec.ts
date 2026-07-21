@@ -126,6 +126,45 @@ test("renders a passed receipt with keyboard access and no serious axe finding",
   expect(results.violations.filter(({ impact }) => impact === "critical" || impact === "serious")).toEqual([]);
 });
 
+test("uses the AccessPatch EU page title only for the dashboard", async ({ page }) => {
+  await page.route("**/runs/current.json", (route) =>
+    route.fulfill({ json: passedManifest }),
+  );
+
+  await page.goto("/checkout");
+  await expect(page).toHaveTitle("Lattice Supply — Checkout");
+
+  await page.goto("/accesspatch");
+  await expect(page).toHaveTitle("AccessPatch EU");
+});
+
+test("labels the checkout as the restored broken fixture and explains the saved receipt", async ({ page }) => {
+  await page.route("**/runs/current.json", (route) =>
+    route.fulfill({ json: passedManifest }),
+  );
+  await page.goto("/accesspatch");
+
+  await expect(page.getByRole("link", { name: "Open restored broken fixture" })).toBeVisible();
+  await expect(page.getByText(/restores the original deliberately broken fixture/i)).toBeVisible();
+  await expect(page.getByText(/genuine before\/after receipt/i)).toBeVisible();
+});
+
+test("copies the judge command and states deterministic approval provenance", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.route("**/runs/current.json", (route) =>
+    route.fulfill({ json: passedManifest }),
+  );
+  await page.goto("/accesspatch");
+
+  await expect(page.getByText("npm run demo:verify", { exact: true })).toBeVisible();
+  await expect(page.getByText("deterministic_fixture", { exact: true })).toBeVisible();
+  await expect(page.getByText("test_fixture", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Copy judge command" }).click();
+  await expect(page.getByRole("button", { name: "Judge command copied" })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe("npm run demo:verify");
+});
+
 test("renders explicit missing and corrupt states", async ({ page }) => {
   await page.route("**/runs/current.json", (route) =>
     route.fulfill({ status: 404, body: "missing" }),

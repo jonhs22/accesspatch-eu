@@ -20,7 +20,7 @@ try {
     }
 
     ffmpeg -hide_banner -loglevel error -y -i $rawAudio `
-        -af "atempo=0.94,loudnorm=I=-16:TP=-1.5:LRA=11" -ar 48000 -ac 2 `
+        -af "atempo=0.975,loudnorm=I=-16:TP=-1.5:LRA=11" -ar 48000 -ac 2 `
         -c:a pcm_s24le $normalizedAudio
     if ($LASTEXITCODE -ne 0) {
         throw "Narration normalization failed with exit code $LASTEXITCODE."
@@ -35,8 +35,8 @@ try {
         $durationText.Trim(),
         [System.Globalization.CultureInfo]::InvariantCulture
     )
-    if ($duration -lt 150 -or $duration -gt 175) {
-        throw "Narration duration $duration seconds is outside 150-175 seconds."
+    if ($duration -lt 150 -or $duration -gt 166.5) {
+        throw "Narration duration $duration seconds is outside 150-166.5 seconds."
     }
 
     Write-Output ("Narration ready: {0:N1}s, local Kokoro af_nova, -16 LUFS target." -f $duration)

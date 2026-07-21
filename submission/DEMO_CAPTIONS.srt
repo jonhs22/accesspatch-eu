@@ -1,311 +1,323 @@
 1
-00:00:00,000 --> 00:00:02,408
+00:00:00,000 --> 00:00:02,335
 A checkout can look finished
 
 2
-00:00:02,458 --> 00:00:04,516
+00:00:02,385 --> 00:00:04,370
 and still stop a keyboard
 
 3
-00:00:04,566 --> 00:00:06,624
+00:00:04,420 --> 00:00:06,406
 user cold. AccessPatch EU turns
 
 4
-00:00:06,674 --> 00:00:08,732
+00:00:06,456 --> 00:00:08,441
 that failure into an evidence-backed
 
 5
-00:00:08,782 --> 00:00:10,840
+00:00:08,491 --> 00:00:10,476
 patch, then proves the same
 
 6
-00:00:10,890 --> 00:00:12,948
-journey works. Here is the
+00:00:10,526 --> 00:00:12,511
+journey works. This is the
 
 7
-00:00:12,998 --> 00:00:15,056
-synthetic Lattice Supply checkout. I
+00:00:12,561 --> 00:00:14,546
+real synthetic Lattice Supply checkout
 
 8
-00:00:15,106 --> 00:00:17,164
-start secure checkout using only
+00:00:14,596 --> 00:00:16,581
+on localhost. I open secure
 
 9
-00:00:17,214 --> 00:00:19,273
-the keyboard. The email receives
+00:00:16,631 --> 00:00:18,617
+checkout and use only the
 
 10
-00:00:19,323 --> 00:00:21,381
-focus, but every Tab is
+00:00:18,667 --> 00:00:20,652
+keyboard. Every Tab is intercepted
 
 11
-00:00:21,431 --> 00:00:23,489
-intercepted and returned to it.
+00:00:20,702 --> 00:00:22,687
+and returned to the invalid
 
 12
-00:00:23,539 --> 00:00:25,597
-Five presses later, focus has
+00:00:22,737 --> 00:00:24,722
+email. Five presses later, focus
 
 13
-00:00:25,647 --> 00:00:27,705
-not moved. The payment control
+00:00:24,772 --> 00:00:26,757
+has not moved. The payment
 
 14
-00:00:27,755 --> 00:00:29,813
-is unnamed, and the visible
+00:00:26,807 --> 00:00:28,793
+control is unnamed, and the
 
 15
-00:00:29,863 --> 00:00:31,921
-validation error is silent to
+00:00:28,843 --> 00:00:30,828
+visible error is silent to
 
 16
-00:00:31,971 --> 00:00:34,029
-assistive technology. AccessPatch reruns that
+00:00:30,878 --> 00:00:32,863
+assistive technology. Now I run
 
 17
-00:00:34,079 --> 00:00:36,137
-exact journey with Playwright and
+00:00:32,913 --> 00:00:34,898
+npm run demo colon verify.
 
 18
-00:00:36,187 --> 00:00:38,245
-axe-core. It records the keyboard
+00:00:34,948 --> 00:00:36,933
+This is genuine process output.
 
 19
-00:00:38,295 --> 00:00:40,353
-trace, DOM and accessibility evidence,
+00:00:36,983 --> 00:00:38,969
+The script resets the fixture,
 
 20
-00:00:40,403 --> 00:00:42,461
-a screenshot, and source hints.
+00:00:39,019 --> 00:00:41,004
+starts the app, captures before
 
 21
-00:00:42,511 --> 00:00:44,569
-The baseline ends with three
+00:00:41,054 --> 00:00:43,039
+evidence, writes deterministic proposals, installs
 
 22
-00:00:44,619 --> 00:00:46,677
-stable blocker IDs, not a
+00:00:43,089 --> 00:00:45,074
+the frozen repair, scans again,
 
 23
-00:00:46,727 --> 00:00:48,785
-vague checklist. The evidence view
+00:00:45,124 --> 00:00:47,109
+verifies the journey, and restores
 
 24
-00:00:48,835 --> 00:00:50,893
-connects each runtime failure to
+00:00:47,159 --> 00:00:49,144
+the original source bytes. The
 
 25
-00:00:50,943 --> 00:00:53,001
-a source marker: A P
+00:00:49,194 --> 00:00:51,180
+evidence pack contains a screenshot,
 
 26
-00:00:53,051 --> 00:00:55,109
-E U zero zero one
+00:00:51,230 --> 00:00:53,215
+sanitized DOM and accessibility data,
 
 27
-00:00:55,159 --> 00:00:57,218
-for the unnamed control, zero
+00:00:53,265 --> 00:00:55,250
+a keyboard trace, and source
 
 28
-00:00:57,268 --> 00:00:59,326
-zero two for repeated focus,
+00:00:55,300 --> 00:00:57,285
+hints. It produces three stable
 
 29
-00:00:59,376 --> 00:01:01,434
-and zero zero three for
+00:00:57,335 --> 00:00:59,320
+findings: A P E U
 
 30
-00:01:01,484 --> 00:01:03,542
-the unannounced error. This is
+00:00:59,370 --> 00:01:01,356
+zero zero one and zero
 
 31
-00:01:03,592 --> 00:01:05,650
-a bounded, synthetic localhost target;
+00:01:01,406 --> 00:01:03,391
+zero two are critical; zero
 
 32
-00:01:05,700 --> 00:01:07,758
-no customer or payment data
+00:01:03,441 --> 00:01:05,426
+zero three is serious. External
 
 33
-00:01:07,808 --> 00:01:09,866
-leaves the machine. Inside the
+00:01:05,476 --> 00:01:07,461
+requests are blocked and stored
 
 34
-00:01:09,916 --> 00:01:11,974
-signed-in Codex workflow, GPT-5.6 reads
+00:01:07,511 --> 00:01:09,496
+form values are scrubbed. For
 
 35
-00:01:12,024 --> 00:01:14,082
-those artifacts and correlates behavior
+00:01:09,546 --> 00:01:11,531
+judges, this path is labeled
 
 36
-00:01:14,132 --> 00:01:16,190
-with the responsible React source.
+00:01:11,581 --> 00:01:13,567
+deterministic fixture with approval actor
 
 37
-00:01:16,240 --> 00:01:18,298
-It proposes the smallest behavioral
+00:01:13,617 --> 00:01:15,602
+test fixture. It needs no
 
 38
-00:01:18,348 --> 00:01:20,406
-changes: add an accessible name,
+00:01:15,652 --> 00:01:17,637
+login and never pretends a
 
 39
-00:01:20,456 --> 00:01:22,514
-remove the Tab trap, and
+00:01:17,687 --> 00:01:19,672
+person approved it. Separately, the
 
 40
-00:01:22,564 --> 00:01:24,622
-announce validation while returning focus
+00:01:19,722 --> 00:01:21,707
+interactive workflow runs inside signed-in
 
 41
-00:01:24,672 --> 00:01:26,730
-to the invalid field. Deterministic
+00:01:21,757 --> 00:01:23,743
+Codex. GPT-5.6 proposes bounded candidate
 
 42
-00:01:26,780 --> 00:01:28,838
-tests, not the model, decide
+00:01:23,793 --> 00:01:25,778
+changes, but cannot approve them
 
 43
-00:01:28,888 --> 00:01:30,946
-whether the repair passes. Crucially,
+00:01:25,828 --> 00:01:27,813
+or decide whether they pass.
 
 44
-00:01:30,996 --> 00:01:33,054
-nothing is edited yet. AccessPatch
+00:01:27,863 --> 00:01:29,848
+Every edit is limited to
 
 45
-00:01:33,104 --> 00:01:35,163
-shows the candidate files, intended
+00:01:29,898 --> 00:01:31,883
+source slash checkout slash CheckoutPage
 
 46
-00:01:35,213 --> 00:01:37,271
-behavior, and editable root. A
+00:01:31,933 --> 00:01:33,919
+dot T S X. The
 
 47
-00:01:37,321 --> 00:01:39,379
-human must explicitly approve. Only
+00:01:33,969 --> 00:01:35,954
+real diff removes the Tab
 
 48
-00:01:39,429 --> 00:01:41,487
-then may Codex patch source
+00:01:36,004 --> 00:01:37,989
+trap, names the payment action
 
 49
-00:01:41,537 --> 00:01:43,595
-slash checkout, and an allowlist
+00:01:38,039 --> 00:01:40,024
+Confirm and pay forty-two euros,
 
 50
-00:01:43,645 --> 00:01:45,703
-rejects any diff outside that
+00:01:40,074 --> 00:01:42,059
+connects the error with aria
 
 51
-00:01:45,753 --> 00:01:47,811
-boundary. After approval, the constrained
+00:01:42,109 --> 00:01:44,094
+described by, adds alert and
 
 52
-00:01:47,861 --> 00:01:49,919
-diff changes only the evidence-backed
+00:01:44,144 --> 00:01:46,130
+aria live semantics, and focuses
 
 53
-00:01:49,969 --> 00:01:52,027
-behavior. AccessPatch scans again and
+00:01:46,180 --> 00:01:48,165
+the invalid email. The allowlist
 
 54
-00:01:52,077 --> 00:01:54,135
-replays the original keyboard journey.
+00:01:48,215 --> 00:01:50,200
+rejects every other file. AccessPatch
 
 55
-00:01:54,185 --> 00:01:56,243
-This time Tab advances through
+00:01:50,250 --> 00:01:52,235
+replays the same Playwright journey.
 
 56
-00:01:56,293 --> 00:01:58,351
-the dialog, the payment action
+00:01:52,285 --> 00:01:54,270
+Tab advances, the payment action
 
 57
-00:01:58,401 --> 00:02:00,459
-has a useful name, invalid
+00:01:54,320 --> 00:01:56,306
+exposes its name, invalid input
 
 58
-00:02:00,509 --> 00:02:02,567
-input is announced, and a
+00:01:56,356 --> 00:01:58,341
+is announced, and a valid
 
 59
-00:02:02,617 --> 00:02:04,675
-valid keyboard submission reaches order
+00:01:58,391 --> 00:02:00,376
+keyboard submission reaches order confirmation.
 
 60
-00:02:04,725 --> 00:02:06,783
-confirmation. The verification receipt compares
+00:02:00,426 --> 00:02:02,411
+Deterministic checks, not the model,
 
 61
-00:02:06,833 --> 00:02:08,891
-before and after: all three
+00:02:02,461 --> 00:02:04,446
+decide the outcome. The receipt
 
 62
-00:02:08,941 --> 00:02:10,999
-known critical fixture blockers were
+00:02:04,496 --> 00:02:06,481
+is real: two critical and
 
 63
-00:02:11,049 --> 00:02:13,108
-resolved, no new critical axe
+00:02:06,531 --> 00:02:08,517
+one serious blocker are resolved,
 
 64
-00:02:13,158 --> 00:02:15,216
-finding appeared, the scripted keyboard
+00:02:08,567 --> 00:02:10,552
+no new serious or critical
 
 65
-00:02:15,266 --> 00:02:17,324
-checkout completed, and the diff
+00:02:10,602 --> 00:02:12,587
+regression appears, keyboard checkout passes,
 
 66
-00:02:17,374 --> 00:02:19,432
-remained inside the editable root.
+00:02:12,637 --> 00:02:14,622
+and the diff stays inside
 
 67
-00:02:19,482 --> 00:02:21,540
-Every claim links back to
+00:02:14,672 --> 00:02:16,657
+the approved root. The demo
 
 68
-00:02:21,590 --> 00:02:23,648
-captured evidence and the approved
+00:02:16,707 --> 00:02:18,693
+then restores the broken fixture
 
 69
-00:02:23,698 --> 00:02:25,756
-source change. I built this
+00:02:18,743 --> 00:02:20,728
+byte for byte, keeping the
 
 70
-00:02:25,806 --> 00:02:27,864
-during OpenAI Build Week with
+00:02:20,778 --> 00:02:22,763
+repository repeatable while the dashboard
 
 71
-00:02:27,914 --> 00:02:29,972
-Codex and GPT-5.6: architecture, tests,
+00:02:22,813 --> 00:02:24,798
+retains genuine before and after
 
 72
-00:02:30,022 --> 00:02:32,080
-scanner, guarded workflow, plugin, dashboard,
+00:02:24,848 --> 00:02:26,833
+evidence. To judge it, run
 
 73
-00:02:32,130 --> 00:02:34,188
-and submission tooling. The primary
+00:02:26,883 --> 00:02:28,869
+npm ci, install Playwright Chromium,
 
 74
-00:02:34,238 --> 00:02:36,296
-workflow uses the signed-in Codex
+00:02:28,919 --> 00:02:30,904
+then run npm run demo
 
 75
-00:02:36,346 --> 00:02:38,404
-client, so it needs no
+00:02:30,954 --> 00:02:32,939
+colon verify. The terminal ends
 
 76
-00:02:38,454 --> 00:02:40,512
-OpenAI Platform API key. AccessPatch
+00:02:32,989 --> 00:02:34,974
+with AccessPatch verification: pass. This
 
 77
-00:02:40,562 --> 00:02:42,620
-EU provides technical remediation evidence,
+00:02:35,024 --> 00:02:37,009
+route needs no OpenAI Platform
 
 78
-00:02:42,670 --> 00:02:45,150
-not legal advice or accessibility certification.
+00:02:37,059 --> 00:02:39,044
+API key; the interactive route
+
+79
+00:02:39,094 --> 00:02:41,080
+uses signed-in Codex. AccessPatch EU
+
+80
+00:02:41,130 --> 00:02:43,115
+provides technical evidence, not legal
+
+81
+00:02:43,165 --> 00:02:45,150
+advice, certification, or guaranteed compliance.

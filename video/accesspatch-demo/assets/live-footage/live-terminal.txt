@@ -1,0 +1,807 @@
+
+> accesspatch-eu@1.0.0 demo:verify
+> node scripts/demo-verify.mjs
+
+{
+  "sha256": "f138c936b411ece51e7b21f31ceef04bffe6c0b36eaf512176f03b31893d75b5",
+  "source": "fixtures/broken-demo/CheckoutPage.tsx",
+  "target": "src/checkout/CheckoutPage.tsx"
+}
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "runId": "demo-20260721142104-9e82f739",
+  "runMode": "deterministic_fixture",
+  "status": "analyzing",
+  "targetUrl": "http://127.0.0.1:4173/checkout",
+  "editableRoots": [
+    "src/checkout"
+  ],
+  "baselineCommit": "86dd3e795c122789863c6b9f335f1127d4fce22e",
+  "createdAt": "2026-07-21T14:21:05.397Z",
+  "updatedAt": "2026-07-21T14:21:09.286Z",
+  "toolVersions": {
+    "node": "24.18.0",
+    "playwright": "1.61.1",
+    "axe": "4.12.1",
+    "accesspatch": "1.0.0"
+  },
+  "before": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "before",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:09.232Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json",
+    "findings": [
+      {
+        "id": "AP-EU-001",
+        "severity": "critical",
+        "rule": "button-name",
+        "sourceMarker": "ACCESSPATCH-DEMO-001",
+        "userImpact": "The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+        "route": "/checkout",
+        "journeyStep": "Submit payment",
+        "selector": "[data-testid=\"payment-submit\"]",
+        "htmlExcerpt": "<button class=\"payment-submit\" data-testid=\"payment-submit\" type=\"submit\"><svg aria-hidden=\"true\" viewBox=\"0 0 48 36\"><rect x=\"3\" y=\"4\" width=\"42\" height=\"28\" rx=\"3\" fill=\"none\"></rect><path d=\"M4 13h40M11 23h10\" fill=\"none\"></path></svg></button>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag412"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json"
+        ],
+        "remediationConstraint": "Keep the existing payment action and add a stable accessible name without duplicating visible controls.",
+        "verificationAssertion": "The payment action has accessible name \"Confirm and pay €42.00\"."
+      },
+      {
+        "id": "AP-EU-002",
+        "severity": "critical",
+        "rule": "keyboard-focus-trap",
+        "sourceMarker": "ACCESSPATCH-DEMO-002",
+        "userImpact": "Keyboard users cannot move beyond the email field to reach and activate payment.",
+        "route": "/checkout",
+        "journeyStep": "Move from email to payment",
+        "selector": "[data-testid=\"email\"]",
+        "htmlExcerpt": "<input id=\"email\" data-testid=\"email\" aria-invalid=\"true\" type=\"email\">",
+        "wcagTags": [
+          "wcag211",
+          "wcag212",
+          "wcag2a"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+        ],
+        "remediationConstraint": "Preserve native Tab order without adding positive tabindex values or a replacement keyboard shortcut.",
+        "verificationAssertion": "Tab moves focus from the email field to the payment action."
+      },
+      {
+        "id": "AP-EU-003",
+        "severity": "serious",
+        "rule": "validation-announcement",
+        "sourceMarker": "ACCESSPATCH-DEMO-003",
+        "userImpact": "The visible validation error is not exposed as a live announcement to assistive technology.",
+        "route": "/checkout",
+        "journeyStep": "Submit invalid email",
+        "selector": "[data-testid=\"form-error\"]",
+        "htmlExcerpt": "<p class=\"form-error\" data-testid=\"form-error\">Enter a valid email address before continuing.</p>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag331",
+          "wcag413"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml"
+        ],
+        "remediationConstraint": "Announce the existing useful error message and return focus to the invalid email field.",
+        "verificationAssertion": "Invalid submission exposes an assertive alert and focuses the email field."
+      }
+    ],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      }
+    ]
+  }
+}
+{
+  "schemaVersion": 1,
+  "revision": 2,
+  "runId": "demo-20260721142104-9e82f739",
+  "runMode": "deterministic_fixture",
+  "status": "awaiting_approval",
+  "targetUrl": "http://127.0.0.1:4173/checkout",
+  "editableRoots": [
+    "src/checkout"
+  ],
+  "baselineCommit": "86dd3e795c122789863c6b9f335f1127d4fce22e",
+  "createdAt": "2026-07-21T14:21:05.397Z",
+  "updatedAt": "2026-07-21T14:21:09.313Z",
+  "toolVersions": {
+    "node": "24.18.0",
+    "playwright": "1.61.1",
+    "axe": "4.12.1",
+    "accesspatch": "1.0.0"
+  },
+  "before": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "before",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:09.232Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json",
+    "findings": [
+      {
+        "id": "AP-EU-001",
+        "severity": "critical",
+        "rule": "button-name",
+        "sourceMarker": "ACCESSPATCH-DEMO-001",
+        "userImpact": "The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+        "route": "/checkout",
+        "journeyStep": "Submit payment",
+        "selector": "[data-testid=\"payment-submit\"]",
+        "htmlExcerpt": "<button class=\"payment-submit\" data-testid=\"payment-submit\" type=\"submit\"><svg aria-hidden=\"true\" viewBox=\"0 0 48 36\"><rect x=\"3\" y=\"4\" width=\"42\" height=\"28\" rx=\"3\" fill=\"none\"></rect><path d=\"M4 13h40M11 23h10\" fill=\"none\"></path></svg></button>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag412"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json"
+        ],
+        "remediationConstraint": "Keep the existing payment action and add a stable accessible name without duplicating visible controls.",
+        "verificationAssertion": "The payment action has accessible name \"Confirm and pay €42.00\"."
+      },
+      {
+        "id": "AP-EU-002",
+        "severity": "critical",
+        "rule": "keyboard-focus-trap",
+        "sourceMarker": "ACCESSPATCH-DEMO-002",
+        "userImpact": "Keyboard users cannot move beyond the email field to reach and activate payment.",
+        "route": "/checkout",
+        "journeyStep": "Move from email to payment",
+        "selector": "[data-testid=\"email\"]",
+        "htmlExcerpt": "<input id=\"email\" data-testid=\"email\" aria-invalid=\"true\" type=\"email\">",
+        "wcagTags": [
+          "wcag211",
+          "wcag212",
+          "wcag2a"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+        ],
+        "remediationConstraint": "Preserve native Tab order without adding positive tabindex values or a replacement keyboard shortcut.",
+        "verificationAssertion": "Tab moves focus from the email field to the payment action."
+      },
+      {
+        "id": "AP-EU-003",
+        "severity": "serious",
+        "rule": "validation-announcement",
+        "sourceMarker": "ACCESSPATCH-DEMO-003",
+        "userImpact": "The visible validation error is not exposed as a live announcement to assistive technology.",
+        "route": "/checkout",
+        "journeyStep": "Submit invalid email",
+        "selector": "[data-testid=\"form-error\"]",
+        "htmlExcerpt": "<p class=\"form-error\" data-testid=\"form-error\">Enter a valid email address before continuing.</p>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag331",
+          "wcag413"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml"
+        ],
+        "remediationConstraint": "Announce the existing useful error message and return focus to the invalid email field.",
+        "verificationAssertion": "Invalid submission exposes an assertive alert and focuses the email field."
+      }
+    ],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      }
+    ]
+  },
+  "proposals": [
+    {
+      "findingId": "AP-EU-001",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-001: The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-001.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-002",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-002: Keyboard users cannot move beyond the email field to reach and activate payment.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-002.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-003",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-003: The visible validation error is not exposed as a live announcement to assistive technology.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-003.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    }
+  ]
+}
+{
+  "schemaVersion": 1,
+  "revision": 3,
+  "runId": "demo-20260721142104-9e82f739",
+  "runMode": "deterministic_fixture",
+  "status": "patching",
+  "targetUrl": "http://127.0.0.1:4173/checkout",
+  "editableRoots": [
+    "src/checkout"
+  ],
+  "baselineCommit": "86dd3e795c122789863c6b9f335f1127d4fce22e",
+  "createdAt": "2026-07-21T14:21:05.397Z",
+  "updatedAt": "2026-07-21T14:21:09.338Z",
+  "toolVersions": {
+    "node": "24.18.0",
+    "playwright": "1.61.1",
+    "axe": "4.12.1",
+    "accesspatch": "1.0.0"
+  },
+  "before": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "before",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:09.232Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json",
+    "findings": [
+      {
+        "id": "AP-EU-001",
+        "severity": "critical",
+        "rule": "button-name",
+        "sourceMarker": "ACCESSPATCH-DEMO-001",
+        "userImpact": "The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+        "route": "/checkout",
+        "journeyStep": "Submit payment",
+        "selector": "[data-testid=\"payment-submit\"]",
+        "htmlExcerpt": "<button class=\"payment-submit\" data-testid=\"payment-submit\" type=\"submit\"><svg aria-hidden=\"true\" viewBox=\"0 0 48 36\"><rect x=\"3\" y=\"4\" width=\"42\" height=\"28\" rx=\"3\" fill=\"none\"></rect><path d=\"M4 13h40M11 23h10\" fill=\"none\"></path></svg></button>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag412"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json"
+        ],
+        "remediationConstraint": "Keep the existing payment action and add a stable accessible name without duplicating visible controls.",
+        "verificationAssertion": "The payment action has accessible name \"Confirm and pay €42.00\"."
+      },
+      {
+        "id": "AP-EU-002",
+        "severity": "critical",
+        "rule": "keyboard-focus-trap",
+        "sourceMarker": "ACCESSPATCH-DEMO-002",
+        "userImpact": "Keyboard users cannot move beyond the email field to reach and activate payment.",
+        "route": "/checkout",
+        "journeyStep": "Move from email to payment",
+        "selector": "[data-testid=\"email\"]",
+        "htmlExcerpt": "<input id=\"email\" data-testid=\"email\" aria-invalid=\"true\" type=\"email\">",
+        "wcagTags": [
+          "wcag211",
+          "wcag212",
+          "wcag2a"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+        ],
+        "remediationConstraint": "Preserve native Tab order without adding positive tabindex values or a replacement keyboard shortcut.",
+        "verificationAssertion": "Tab moves focus from the email field to the payment action."
+      },
+      {
+        "id": "AP-EU-003",
+        "severity": "serious",
+        "rule": "validation-announcement",
+        "sourceMarker": "ACCESSPATCH-DEMO-003",
+        "userImpact": "The visible validation error is not exposed as a live announcement to assistive technology.",
+        "route": "/checkout",
+        "journeyStep": "Submit invalid email",
+        "selector": "[data-testid=\"form-error\"]",
+        "htmlExcerpt": "<p class=\"form-error\" data-testid=\"form-error\">Enter a valid email address before continuing.</p>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag331",
+          "wcag413"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml"
+        ],
+        "remediationConstraint": "Announce the existing useful error message and return focus to the invalid email field.",
+        "verificationAssertion": "Invalid submission exposes an assertive alert and focuses the email field."
+      }
+    ],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      }
+    ]
+  },
+  "proposals": [
+    {
+      "findingId": "AP-EU-001",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-001: The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-001.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-002",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-002: Keyboard users cannot move beyond the email field to reach and activate payment.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-002.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-003",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-003: The visible validation error is not exposed as a live announcement to assistive technology.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-003.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    }
+  ],
+  "approval": {
+    "decision": "approved",
+    "findingIds": [
+      "AP-EU-001",
+      "AP-EU-002",
+      "AP-EU-003"
+    ],
+    "actor": "test_fixture",
+    "recordedAt": "2026-07-21T14:21:09.338Z"
+  }
+}
+{
+  "schemaVersion": 1,
+  "revision": 4,
+  "runId": "demo-20260721142104-9e82f739",
+  "runMode": "deterministic_fixture",
+  "status": "verifying",
+  "targetUrl": "http://127.0.0.1:4173/checkout",
+  "editableRoots": [
+    "src/checkout"
+  ],
+  "baselineCommit": "86dd3e795c122789863c6b9f335f1127d4fce22e",
+  "createdAt": "2026-07-21T14:21:05.397Z",
+  "updatedAt": "2026-07-21T14:21:13.832Z",
+  "toolVersions": {
+    "node": "24.18.0",
+    "playwright": "1.61.1",
+    "axe": "4.12.1",
+    "accesspatch": "1.0.0"
+  },
+  "before": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "before",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:09.232Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json",
+    "findings": [
+      {
+        "id": "AP-EU-001",
+        "severity": "critical",
+        "rule": "button-name",
+        "sourceMarker": "ACCESSPATCH-DEMO-001",
+        "userImpact": "The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+        "route": "/checkout",
+        "journeyStep": "Submit payment",
+        "selector": "[data-testid=\"payment-submit\"]",
+        "htmlExcerpt": "<button class=\"payment-submit\" data-testid=\"payment-submit\" type=\"submit\"><svg aria-hidden=\"true\" viewBox=\"0 0 48 36\"><rect x=\"3\" y=\"4\" width=\"42\" height=\"28\" rx=\"3\" fill=\"none\"></rect><path d=\"M4 13h40M11 23h10\" fill=\"none\"></path></svg></button>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag412"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json"
+        ],
+        "remediationConstraint": "Keep the existing payment action and add a stable accessible name without duplicating visible controls.",
+        "verificationAssertion": "The payment action has accessible name \"Confirm and pay €42.00\"."
+      },
+      {
+        "id": "AP-EU-002",
+        "severity": "critical",
+        "rule": "keyboard-focus-trap",
+        "sourceMarker": "ACCESSPATCH-DEMO-002",
+        "userImpact": "Keyboard users cannot move beyond the email field to reach and activate payment.",
+        "route": "/checkout",
+        "journeyStep": "Move from email to payment",
+        "selector": "[data-testid=\"email\"]",
+        "htmlExcerpt": "<input id=\"email\" data-testid=\"email\" aria-invalid=\"true\" type=\"email\">",
+        "wcagTags": [
+          "wcag211",
+          "wcag212",
+          "wcag2a"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+        ],
+        "remediationConstraint": "Preserve native Tab order without adding positive tabindex values or a replacement keyboard shortcut.",
+        "verificationAssertion": "Tab moves focus from the email field to the payment action."
+      },
+      {
+        "id": "AP-EU-003",
+        "severity": "serious",
+        "rule": "validation-announcement",
+        "sourceMarker": "ACCESSPATCH-DEMO-003",
+        "userImpact": "The visible validation error is not exposed as a live announcement to assistive technology.",
+        "route": "/checkout",
+        "journeyStep": "Submit invalid email",
+        "selector": "[data-testid=\"form-error\"]",
+        "htmlExcerpt": "<p class=\"form-error\" data-testid=\"form-error\">Enter a valid email address before continuing.</p>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag331",
+          "wcag413"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml"
+        ],
+        "remediationConstraint": "Announce the existing useful error message and return focus to the invalid email field.",
+        "verificationAssertion": "Invalid submission exposes an assertive alert and focuses the email field."
+      }
+    ],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      }
+    ]
+  },
+  "proposals": [
+    {
+      "findingId": "AP-EU-001",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-001: The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-001.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-002",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-002: Keyboard users cannot move beyond the email field to reach and activate payment.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-002.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-003",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-003: The visible validation error is not exposed as a live announcement to assistive technology.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-003.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    }
+  ],
+  "approval": {
+    "decision": "approved",
+    "findingIds": [
+      "AP-EU-001",
+      "AP-EU-002",
+      "AP-EU-003"
+    ],
+    "actor": "test_fixture",
+    "recordedAt": "2026-07-21T14:21:09.338Z"
+  },
+  "after": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "after",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:13.674Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json",
+    "findings": [],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      }
+    ]
+  }
+}
+{
+  "schemaVersion": 1,
+  "revision": 5,
+  "runId": "demo-20260721142104-9e82f739",
+  "runMode": "deterministic_fixture",
+  "status": "passed",
+  "targetUrl": "http://127.0.0.1:4173/checkout",
+  "editableRoots": [
+    "src/checkout"
+  ],
+  "baselineCommit": "86dd3e795c122789863c6b9f335f1127d4fce22e",
+  "createdAt": "2026-07-21T14:21:05.397Z",
+  "updatedAt": "2026-07-21T14:21:14.168Z",
+  "toolVersions": {
+    "node": "24.18.0",
+    "playwright": "1.61.1",
+    "axe": "4.12.1",
+    "accesspatch": "1.0.0"
+  },
+  "before": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "before",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:09.232Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json",
+    "findings": [
+      {
+        "id": "AP-EU-001",
+        "severity": "critical",
+        "rule": "button-name",
+        "sourceMarker": "ACCESSPATCH-DEMO-001",
+        "userImpact": "The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+        "route": "/checkout",
+        "journeyStep": "Submit payment",
+        "selector": "[data-testid=\"payment-submit\"]",
+        "htmlExcerpt": "<button class=\"payment-submit\" data-testid=\"payment-submit\" type=\"submit\"><svg aria-hidden=\"true\" viewBox=\"0 0 48 36\"><rect x=\"3\" y=\"4\" width=\"42\" height=\"28\" rx=\"3\" fill=\"none\"></rect><path d=\"M4 13h40M11 23h10\" fill=\"none\"></path></svg></button>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag412"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/axe.json"
+        ],
+        "remediationConstraint": "Keep the existing payment action and add a stable accessible name without duplicating visible controls.",
+        "verificationAssertion": "The payment action has accessible name \"Confirm and pay €42.00\"."
+      },
+      {
+        "id": "AP-EU-002",
+        "severity": "critical",
+        "rule": "keyboard-focus-trap",
+        "sourceMarker": "ACCESSPATCH-DEMO-002",
+        "userImpact": "Keyboard users cannot move beyond the email field to reach and activate payment.",
+        "route": "/checkout",
+        "journeyStep": "Move from email to payment",
+        "selector": "[data-testid=\"email\"]",
+        "htmlExcerpt": "<input id=\"email\" data-testid=\"email\" aria-invalid=\"true\" type=\"email\">",
+        "wcagTags": [
+          "wcag211",
+          "wcag212",
+          "wcag2a"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+        ],
+        "remediationConstraint": "Preserve native Tab order without adding positive tabindex values or a replacement keyboard shortcut.",
+        "verificationAssertion": "Tab moves focus from the email field to the payment action."
+      },
+      {
+        "id": "AP-EU-003",
+        "severity": "serious",
+        "rule": "validation-announcement",
+        "sourceMarker": "ACCESSPATCH-DEMO-003",
+        "userImpact": "The visible validation error is not exposed as a live announcement to assistive technology.",
+        "route": "/checkout",
+        "journeyStep": "Submit invalid email",
+        "selector": "[data-testid=\"form-error\"]",
+        "htmlExcerpt": "<p class=\"form-error\" data-testid=\"form-error\">Enter a valid email address before continuing.</p>",
+        "wcagTags": [
+          "wcag2a",
+          "wcag331",
+          "wcag413"
+        ],
+        "evidencePaths": [
+          "public/runs/runtime/demo-20260721142104-9e82f739/before/aria.yml"
+        ],
+        "remediationConstraint": "Announce the existing useful error message and return focus to the invalid email field.",
+        "verificationAssertion": "Invalid submission exposes an assertive alert and focuses the email field."
+      }
+    ],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": false,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/before/keyboard.json"
+      }
+    ]
+  },
+  "proposals": [
+    {
+      "findingId": "AP-EU-001",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-001: The payment action has no accessible name, so its purpose is unavailable to assistive technology users.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-001.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-002",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-002: Keyboard users cannot move beyond the email field to reach and activate payment.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-002.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    },
+    {
+      "findingId": "AP-EU-003",
+      "diagnosis": "Deterministic fixture diagnosis for AP-EU-003: The visible validation error is not exposed as a live announcement to assistive technology.",
+      "proposedChange": "Apply the frozen repaired checkout behavior for AP-EU-003.",
+      "candidateFiles": [
+        "src/checkout/CheckoutPage.tsx"
+      ]
+    }
+  ],
+  "approval": {
+    "decision": "approved",
+    "findingIds": [
+      "AP-EU-001",
+      "AP-EU-002",
+      "AP-EU-003"
+    ],
+    "actor": "test_fixture",
+    "recordedAt": "2026-07-21T14:21:09.338Z"
+  },
+  "after": {
+    "runId": "demo-20260721142104-9e82f739",
+    "phase": "after",
+    "url": "http://127.0.0.1:4173/checkout",
+    "capturedAt": "2026-07-21T14:21:13.674Z",
+    "screenshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/screenshot.png",
+    "tracePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/trace.zip",
+    "domPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/dom.html",
+    "ariaSnapshotPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/aria.yml",
+    "axeReportPath": "public/runs/runtime/demo-20260721142104-9e82f739/after/axe.json",
+    "keyboardTracePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json",
+    "findings": [],
+    "journeyChecks": [
+      {
+        "id": "checkout-completes",
+        "label": "Keyboard journey reaches order confirmation",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      },
+      {
+        "id": "focus-escapes-email",
+        "label": "Tab moves focus beyond the email field",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      },
+      {
+        "id": "validation-announced",
+        "label": "Invalid email validation is exposed as a live announcement",
+        "passed": true,
+        "evidencePath": "public/runs/runtime/demo-20260721142104-9e82f739/after/keyboard.json"
+      }
+    ]
+  },
+  "verification": {
+    "outcome": "passed",
+    "resolvedFindingIds": [
+      "AP-EU-001",
+      "AP-EU-002",
+      "AP-EU-003"
+    ],
+    "remainingFindingIds": [],
+    "regressions": [],
+    "checkoutCompleted": true,
+    "changedFiles": [
+      "src/checkout/CheckoutPage.tsx"
+    ],
+    "diffWithinAllowlist": true,
+    "diffPath": "public/runs/runtime/demo-20260721142104-9e82f739/verification/diff.patch",
+    "failureReasons": []
+  }
+}
+AccessPatch verification: PASS

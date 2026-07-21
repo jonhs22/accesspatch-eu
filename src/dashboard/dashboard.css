@@ -178,6 +178,64 @@
   font-size: 0.84rem;
 }
 
+.ap-judge {
+  border-bottom: 2px solid var(--ap-ink);
+  padding: 2rem 4.5vw;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.25rem 3rem;
+  align-items: center;
+  background: #e2f6e7;
+}
+
+.ap-judge h2,
+.ap-judge p {
+  margin: 0;
+}
+
+.ap-judge h2 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.ap-judge > div > p:last-child {
+  max-width: 68ch;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+.ap-command {
+  border: 2px solid var(--ap-ink);
+  display: flex;
+  align-items: stretch;
+  background: var(--ap-paper);
+}
+
+.ap-command code {
+  padding: 0.9rem 1rem;
+  display: grid;
+  place-items: center;
+  font-weight: 750;
+}
+
+.ap-command button {
+  border: 0;
+  border-left: 2px solid var(--ap-ink);
+  padding: 0.9rem 1rem;
+  background: var(--ap-mint);
+  color: inherit;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.ap-fixture-note {
+  grid-column: 1 / -1;
+  border-left: 0.45rem solid var(--ap-coral);
+  padding: 0.8rem 1rem;
+  background: var(--ap-paper);
+  line-height: 1.5;
+}
+
 .ap-journey {
   padding: 0 4.5vw;
   border-bottom: 2px solid var(--ap-ink);
@@ -573,7 +631,8 @@
 
   .ap-hero,
   .ap-verification,
-  .ap-tooling {
+  .ap-tooling,
+  .ap-judge {
     grid-template-columns: 1fr;
   }
 
@@ -623,6 +682,7 @@
   }
 
   .ap-provenance,
+  .ap-judge,
   .ap-journey,
   .ap-metrics {
     padding-left: 1.1rem;
@@ -632,6 +692,15 @@
   .ap-section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ap-command {
+    width: 100%;
+  }
+
+  .ap-command code {
+    min-width: 0;
+    flex: 1;
   }
 
   .ap-receipt {
