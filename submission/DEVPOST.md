@@ -77,9 +77,12 @@ certification remain outside scope.
 
 AccessPatch EU produces technical remediation evidence, not legal advice, certification, or a guarantee of EAA/WCAG compliance. AI-proposed patches require human review.
 
-## External account handoff
+## Demo video
 
-The submitter uploads `submission/accesspatch-eu-demo.mp4` to YouTube, adds the
-public URL to Devpost, retrieves the primary Codex session identifier with
-`/feedback`, and performs the final Devpost submit action. Those account-bound
-actions are intentionally not fabricated by repository automation.
+Public YouTube URL: https://youtu.be/K0bKkyyBVIE
+
+Public source repository: https://github.com/jonhs22/accesspatch-eu
+
+The published video uses the verified `submission/accesspatch-eu-demo.mp4`, the
+submission thumbnail, and the timed English captions in
+`submission/DEMO_CAPTIONS.srt`.

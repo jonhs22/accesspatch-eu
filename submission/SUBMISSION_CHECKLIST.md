@@ -23,11 +23,13 @@
 
 ## External account handoff
 
-- [ ] Upload the verified MP4 to the submitter's YouTube account and copy its
-  public URL into Devpost.
+- [ ] Push the verified project to the public repository:
+  https://github.com/jonhs22/accesspatch-eu
+- [x] Upload the verified MP4 to the submitter's YouTube account and copy its
+  public URL: https://youtu.be/K0bKkyyBVIE
 - [ ] Run `/feedback` in the primary signed-in Codex task and copy the returned
   session identifier into the required submission field.
 - [ ] Review the final Devpost preview and perform the submit action.
 
-Unchecked items require the submitter's authenticated external account. They
-are deliberately not reported as completed local automation.
+Unchecked items still require completion in the submitter's authenticated
+Devpost account.

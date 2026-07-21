@@ -3,6 +3,10 @@
 AccessPatch EU turns a synthetic inaccessible checkout into a reviewable,
 source-bounded repair and a deterministic verification receipt.
 
+Public repository: https://github.com/jonhs22/accesspatch-eu
+
+Public demo video: https://youtu.be/K0bKkyyBVIE
+
 ## Judge quick start
 
 The deterministic judge path requires no login and no OpenAI Platform API key.
