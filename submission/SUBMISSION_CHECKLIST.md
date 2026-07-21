@@ -29,7 +29,7 @@
   public URL: https://youtu.be/K0bKkyyBVIE
 - [x] Retrieve the primary build task identifier with `/status` and record the
   Session ID: `019f7fed-5bbd-78e1-83b8-8c5ef532a3af`.
-- [ ] Review the final Devpost preview and perform the submit action.
+- [x] Review the final Devpost preview and perform the submit action:
+  https://devpost.com/software/accesspatch-eu
 
-Unchecked items still require completion in the submitter's authenticated
-Devpost account.
+All external account handoffs are complete.

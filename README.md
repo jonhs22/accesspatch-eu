@@ -9,6 +9,8 @@ Public repository: https://github.com/jonhs22/accesspatch-eu
 
 Public demo video: https://youtu.be/K0bKkyyBVIE
 
+Public Devpost submission: https://devpost.com/software/accesspatch-eu
+
 ## Judge quick start
 
 The public repository is the judge test build. The deterministic path requires
